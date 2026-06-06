@@ -1,0 +1,66 @@
+.channel-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.42);
+  color: inherit;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.channel-card:hover,
+.channel-card.selected {
+  border-color: rgba(34, 211, 238, 0.54);
+  background: rgba(8, 47, 73, 0.46);
+  transform: translateY(-1px);
+}
+
+.logo-frame {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 15px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.92));
+  color: #22d3ee;
+  font-weight: 900;
+}
+
+img {
+  max-width: 82%;
+  max-height: 82%;
+  object-fit: contain;
+}
+
+.channel-copy {
+  min-width: 0;
+}
+
+strong,
+small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+strong {
+  color: #f8fafc;
+  font-size: 0.95rem;
+}
+
+small {
+  margin-top: 4px;
+  color: #93a4ba;
+  font-size: 0.78rem;
+}

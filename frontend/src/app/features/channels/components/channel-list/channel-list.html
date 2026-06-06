@@ -1,0 +1,21 @@
+<section class="channel-list-panel" aria-label="Channels">
+  <div class="list-header">
+    <h2>Channels</h2>
+    <span>{{ channels().length }} visible</span>
+  </div>
+
+  <div class="channel-scroll">
+    @for (channel of channels(); track channel.id) {
+      <app-channel-card
+        [channel]="channel"
+        [isSelected]="channel.id === selectedChannelId()"
+        (channelSelected)="channelSelected.emit($event)"
+      />
+    } @empty {
+      <article class="empty-list">
+        <h3>No matches</h3>
+        <p>Try another search, group, or playlist.</p>
+      </article>
+    }
+  </div>
+</section>

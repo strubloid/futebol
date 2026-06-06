@@ -1,0 +1,56 @@
+.channel-list-panel {
+  min-height: 620px;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1rem;
+}
+
+.list-header span {
+  color: #93a4ba;
+  font-size: 0.82rem;
+}
+
+.channel-scroll {
+  display: grid;
+  gap: 10px;
+  max-height: 660px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.empty-list {
+  padding: 18px;
+  border: 1px dashed rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  color: #93a4ba;
+}
+
+.empty-list h3 {
+  margin: 0 0 6px;
+  color: #e5edf8;
+}
+
+.empty-list p {
+  margin: 0;
+}
+
+@media (max-width: 860px) {
+  .channel-list-panel {
+    min-height: auto;
+  }
+
+  .channel-scroll {
+    max-height: 420px;
+  }
+}

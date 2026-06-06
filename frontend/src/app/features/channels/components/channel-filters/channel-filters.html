@@ -1,0 +1,31 @@
+<section class="filters-panel" aria-label="Channel filters">
+  <label class="search-field">
+    <span>Search channels</span>
+    <input
+      type="search"
+      placeholder="Search by channel, group, or playlist..."
+      [ngModel]="filters().searchTerm"
+      (ngModelChange)="updateSearchTerm($event)"
+    />
+  </label>
+
+  <label>
+    <span>Group</span>
+    <select [ngModel]="filters().groupTitle" (ngModelChange)="updateGroup($event)">
+      <option value="all">All groups</option>
+      @for (group of groups(); track group) {
+        <option [value]="group">{{ group }}</option>
+      }
+    </select>
+  </label>
+
+  <label>
+    <span>Playlist</span>
+    <select [ngModel]="filters().playlistId" (ngModelChange)="updatePlaylist($event)">
+      <option value="all">All playlists</option>
+      @for (playlist of playlists(); track playlist.id) {
+        <option [value]="playlist.id">{{ playlist.name }}</option>
+      }
+    </select>
+  </label>
+</section>

@@ -1,0 +1,39 @@
+<section class="player-panel" aria-label="Channel preview">
+  @if (channel(); as selectedChannel) {
+    <div class="player-header">
+      <div>
+        <p>Now previewing</p>
+        <h2>{{ selectedChannel.name }}</h2>
+      </div>
+      <span>{{ selectedChannel.groupTitle }}</span>
+    </div>
+
+    <div class="video-frame">
+      <video #videoElement controls playsinline></video>
+    </div>
+
+    <p class="playback-message">{{ playbackMessage }}</p>
+
+    <dl class="channel-details">
+      <div>
+        <dt>Playlist</dt>
+        <dd>{{ selectedChannel.sourcePlaylistName }}</dd>
+      </div>
+      <div>
+        <dt>Stream URL</dt>
+        <dd><a [href]="selectedChannel.streamUrl" target="_blank" rel="noreferrer">Open stream</a></dd>
+      </div>
+      @if (selectedChannel.tvgId) {
+        <div>
+          <dt>TVG ID</dt>
+          <dd>{{ selectedChannel.tvgId }}</dd>
+        </div>
+      }
+    </dl>
+  } @else {
+    <div class="empty-player">
+      <h2>Select a channel</h2>
+      <p>{{ playbackMessage }}</p>
+    </div>
+  }
+</section>

@@ -1,0 +1,65 @@
+<main class="channels-shell">
+  <section class="hero-panel">
+    <div class="hero-copy">
+      <p class="eyebrow">Futebol IPTV</p>
+      <h1>Channels loaded from your M3U folder</h1>
+      <p>
+        This dashboard reads the synced playlists, parses every channel, and lets you preview
+        what is happening in each stream.
+      </p>
+    </div>
+
+    <div class="stats-grid" aria-label="Playlist summary">
+      <article>
+        <span>{{ stats().totalPlaylists }}</span>
+        <p>Playlists</p>
+      </article>
+      <article>
+        <span>{{ stats().totalChannels }}</span>
+        <p>Channels</p>
+      </article>
+      <article>
+        <span>{{ stats().visibleChannels }}</span>
+        <p>Visible</p>
+      </article>
+    </div>
+  </section>
+
+  @if (error()) {
+    <section class="state-panel error-panel">
+      <h2>Could not load channels</h2>
+      <p>{{ error() }}</p>
+      <button type="button" (click)="loadChannels()">Try again</button>
+    </section>
+  } @else if (isLoading()) {
+    <section class="state-panel">
+      <h2>Loading M3U playlists...</h2>
+      <p>Reading the playlist manifest and parsing channel metadata.</p>
+    </section>
+  } @else if (channels().length === 0) {
+    <section class="state-panel">
+      <h2>No channels found yet</h2>
+      <p>
+        Add or download M3U playlists with the CLI, then run
+        <code>npm run sync:m3u</code> inside <code>frontend/</code>.
+      </p>
+    </section>
+  } @else {
+    <app-channel-filters
+      [filters]="filters()"
+      [groups]="groups()"
+      [playlists]="playlists()"
+      (filtersChange)="updateFilters($event)"
+    />
+
+    <section class="content-grid">
+      <app-channel-list
+        [channels]="filteredChannels()"
+        [selectedChannelId]="selectedChannel()?.id ?? null"
+        (channelSelected)="selectChannel($event)"
+      />
+
+      <app-channel-player [channel]="selectedChannel()" />
+    </section>
+  }
+</main>
