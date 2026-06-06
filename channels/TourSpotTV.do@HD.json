@@ -1,0 +1,11 @@
+{
+  "tvgId": "TourSpotTV.do@HD",
+  "name": "Tour Spot TV (1280p) [Not 24/7]",
+  "streamUrl": "https://fox.hostlagarto.com:8081/toursporttv/playlist.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://imgur.com/khj869k.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

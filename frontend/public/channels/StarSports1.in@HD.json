@@ -1,0 +1,11 @@
+{
+  "tvgId": "StarSports1.in@HD",
+  "name": "Star Sports 1 HD (1080p)",
+  "streamUrl": "http://103.253.18.58:8000/play/a00m",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/E5jjKHI.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

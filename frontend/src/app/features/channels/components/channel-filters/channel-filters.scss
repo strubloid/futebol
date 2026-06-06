@@ -1,7 +1,6 @@
 .filters-panel {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(150px, 0.32fr) minmax(150px, 0.32fr) auto;
-  gap: 12px;
+  display: flex;
+  gap: 6px;
   padding: 14px;
 }
 
@@ -25,7 +24,14 @@ select {
   outline: 0;
   background: rgba(2, 6, 23, 0.68);
   color: #e5edf8;
+
 }
+.search-field {
+  input{
+    min-width: 250px;
+  }
+}
+
 
 input:focus,
 select:focus {
@@ -68,6 +74,38 @@ select:focus {
   color: #fb7185;
   font-size: 1rem;
   line-height: 1;
+}
+
+.nonworking-toggle {
+  align-self: end;
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 14px;
+  background: rgba(120, 53, 15, 0.3);
+  color: #fde68a;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.nonworking-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: #f59e0b;
+  cursor: pointer;
+}
+
+.nonworking-toggle:has(input:checked) {
+  border-color: rgba(251, 191, 36, 0.75);
+  background: rgba(180, 83, 9, 0.55);
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.12);
 }
 
 @media (max-width: 900px) {

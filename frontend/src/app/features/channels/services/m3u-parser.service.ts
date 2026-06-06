@@ -36,6 +36,7 @@ export class M3uParserService {
         tvgId: pendingMetadata?.attributes['tvg-id'] || null,
         sourcePlaylistId: playlist.id,
         sourcePlaylistName: playlist.name,
+        working: true,
       });
 
       pendingMetadata = null;

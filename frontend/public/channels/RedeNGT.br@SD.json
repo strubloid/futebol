@@ -1,0 +1,11 @@
+{
+  "tvgId": "RedeNGT.br@SD",
+  "name": "Rede NGT (1080p)",
+  "streamUrl": "https://isaocorp.cloudecast.com/ngt/index.m3u8",
+  "groupTitle": "Entertainment",
+  "logoUrl": "https://i.imgur.com/ZFN1R4B.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

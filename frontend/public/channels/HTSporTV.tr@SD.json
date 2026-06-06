@@ -1,0 +1,11 @@
+{
+  "tvgId": "HTSporTV.tr@SD",
+  "name": "HTSpor TV (1080p)",
+  "streamUrl": "https://ciner.daioncdn.net/ht-spor/ht-spor.m3u8?app=web",
+  "groupTitle": "Sports",
+  "logoUrl": "https://www.htspor.com/images/manifest/social-share-logo.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

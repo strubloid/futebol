@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVERS.br@SD",
+  "name": "TVE RS (1080p)",
+  "streamUrl": "https://streaming.procergs.com.br:8443/tve/stve/playlist.m3u8",
+  "groupTitle": "Culture;Education",
+  "logoUrl": "https://i.imgur.com/MQ6lJpS.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

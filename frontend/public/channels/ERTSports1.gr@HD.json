@@ -1,0 +1,11 @@
+{
+  "tvgId": "ERTSports1.gr@HD",
+  "name": "ERT Sports 1 (1080p)",
+  "streamUrl": "http://hbbtvapp.ert.gr/stream.php/v/vid_ertsports_mpeg.2ts",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/EsczO2H.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

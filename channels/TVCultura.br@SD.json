@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVCultura.br@SD",
+  "name": "TV Cultura",
+  "streamUrl": "https://player-tvcultura.stream.uol.com.br/live/tvcultura.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.ibb.co/nm0jXMM/cultura-3x.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

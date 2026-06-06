@@ -1,0 +1,11 @@
+{
+  "tvgId": "RedeSPTV.br@SD",
+  "name": "Rede SPTV (360p)",
+  "streamUrl": "https://video01.logicahost.com.br/websptv/websptv/playlist.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/kh3LGAP.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

@@ -3,4 +3,6 @@ export interface ChannelFilters {
   groupTitle: string;
   playlistId: string;
   favoritesOnly: boolean;
+  /** When true, also shows channels marked as not working */
+  showNonWorking: boolean;
 }

@@ -1,0 +1,11 @@
+{
+  "tvgId": "FloRacing.us@HD",
+  "name": "FloRacing 24/7 (1080p)",
+  "streamUrl": "https://amg02278-amg02278c1-flosports-worldwide-7592.playouts.now.amagi.tv/playlist.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://images.fubo.tv/channel-config-ui/station-logos/on-dark/floracing-white.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

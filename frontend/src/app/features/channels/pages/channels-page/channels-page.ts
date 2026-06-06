@@ -4,8 +4,8 @@ import { take } from 'rxjs';
 import { Channel } from '../../models/channel.interface';
 import { ChannelFilters } from '../../models/channel-filters.interface';
 import { PlaylistFile } from '../../models/playlist-file.interface';
+import { ChannelsLoaderService } from '../../services/channels-loader.service';
 import { FavoriteChannelsService } from '../../services/favorite-channels.service';
-import { PlaylistLoaderService } from '../../services/playlist-loader.service';
 import { ChannelFiltersComponent } from '../../components/channel-filters/channel-filters';
 import { ChannelListComponent } from '../../components/channel-list/channel-list';
 import { ChannelPlayerComponent } from '../../components/channel-player/channel-player';
@@ -17,7 +17,7 @@ import { ChannelPlayerComponent } from '../../components/channel-player/channel-
   styleUrl: './channels-page.scss',
 })
 export class ChannelsPage {
-  private readonly playlistLoader = inject(PlaylistLoaderService);
+  private readonly channelsLoader = inject(ChannelsLoaderService);
   private readonly favoriteChannels = inject(FavoriteChannelsService);
 
   protected readonly channels = signal<Channel[]>([]);
@@ -25,11 +25,14 @@ export class ChannelsPage {
   protected readonly selectedChannel = signal<Channel | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly error = signal<string | null>(null);
+  protected readonly workingCount = signal(0);
+  protected readonly nonWorkingCount = signal(0);
   protected readonly filters = signal<ChannelFilters>({
     searchTerm: '',
     groupTitle: 'all',
     playlistId: 'all',
     favoritesOnly: false,
+    showNonWorking: false,
   });
   protected readonly favoriteIds = this.favoriteChannels.favoriteIds;
 
@@ -44,6 +47,11 @@ export class ChannelsPage {
     const searchTerm = filters.searchTerm.trim().toLowerCase();
 
     return this.channels().filter((channel) => {
+      // Working status filter: hide non-working unless showNonWorking is on
+      if (!channel.working && !filters.showNonWorking) {
+        return false;
+      }
+
       const matchesText =
         searchTerm.length === 0 ||
         channel.name.toLowerCase().includes(searchTerm) ||
@@ -74,18 +82,28 @@ export class ChannelsPage {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this.playlistLoader
-      .loadChannels()
+    this.channelsLoader
+      .loadFromIndex()
       .pipe(take(1))
       .subscribe({
-        next: ({ playlists, channels }) => {
-          this.playlists.set(playlists);
+        next: ({ channels }) => {
+          const working = channels.filter((ch) => ch.working);
+          const nonWorking = channels.filter((ch) => !ch.working);
+
+          this.workingCount.set(working.length);
+          this.nonWorkingCount.set(nonWorking.length);
           this.channels.set(channels);
-          this.selectedChannel.set(channels[0] ?? null);
+          this.playlists.set(this.extractPlaylists(channels));
+
+          if (channels.length > 0) {
+            this.selectedChannel.set(channels[0]);
+          }
           this.isLoading.set(false);
         },
         error: () => {
-          this.error.set('Could not load M3U files. Run npm run sync:m3u inside frontend/ and try again.');
+          this.error.set(
+            'Could not load channels. Run "futebol channels sync-from-m3u" then restart the frontend.',
+          );
           this.isLoading.set(false);
         },
       });
@@ -107,5 +125,23 @@ export class ChannelsPage {
 
   protected toggleFavorite(channel: Channel): void {
     this.favoriteChannels.toggleFavorite(channel.id);
+  }
+
+  private extractPlaylists(channels: Channel[]): PlaylistFile[] {
+    const seen = new Map<string, PlaylistFile>();
+    for (const ch of channels) {
+      const key = ch.sourcePlaylistId;
+      if (!seen.has(key)) {
+        seen.set(key, {
+          id: key,
+          name: ch.sourcePlaylistName,
+          fileName: '',
+          url: '',
+          sizeBytes: 0,
+          updatedAt: '',
+        });
+      }
+    }
+    return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name));
   }
 }

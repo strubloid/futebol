@@ -1,0 +1,11 @@
+{
+  "tvgId": "AmazonSat.br@SD",
+  "name": "Amazon Sat (1080p)",
+  "streamUrl": "https://amazonsat.brasilstream.com.br/hls/amazonsat/index.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/7rjCS5i.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

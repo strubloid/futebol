@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVGuara.br@SD",
+  "name": "TV Guará (720p) [Not 24/7]",
+  "streamUrl": "https://video02.logicahost.com.br/tvguara23/tvguara23/playlist.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/8PErNBT.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVideoNews.br@SD",
+  "name": "TVídeoNews (720p) [Not 24/7]",
+  "streamUrl": "https://video01.logicahost.com.br/tvideonews/tvideonews/playlist.m3u8",
+  "groupTitle": "News",
+  "logoUrl": "https://i.imgur.com/vstHOYx.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

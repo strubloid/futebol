@@ -1,0 +1,11 @@
+{
+  "tvgId": "RedeGlobo.br@SD",
+  "name": "Rede Globo (1080p)",
+  "streamUrl": "https://cors-proxy.cooks.fyi/http://hls1.sua.tv/live/globotvbahiafhdbr2/s.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/O02TF2r.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

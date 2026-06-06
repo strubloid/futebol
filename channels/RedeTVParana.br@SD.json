@@ -1,0 +1,11 @@
+{
+  "tvgId": "RedeTVParana.br@SD",
+  "name": "RedeTV! Parana",
+  "streamUrl": "https://tv01.zas.media:1936/redetvparana/redetvparana/playlist.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/D8R0Af4.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

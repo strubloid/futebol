@@ -5,176 +5,76 @@ import typer
 
 from futebol.app.application import Application
 from futebol.output.console_reporter import ConsoleReporter
+from futebol.ui.menu import run_main_menu
 
 app = typer.Typer(
     name="futebol",
-    help="Legal IPTV discovery and playlist management for football coverage.",
+    help="⚽ IPTV channel manager — load servers, curate channels, export playlists.",
     invoke_without_command=True,
 )
-sources_app = typer.Typer(help="Manage legal/user-provided playlist sources.")
-app.add_typer(sources_app, name="sources")
 
 
 @app.callback()
 def interactive_start(ctx: typer.Context) -> None:
     if ctx.invoked_subcommand is None:
-        run_interactive_menu()
+        run_main_menu()
         raise typer.Exit()
 
 
-def run_interactive_menu() -> None:
-    while True:
-        typer.echo()
-        typer.echo("Futebol IPTV")
-        typer.echo("============")
-        typer.echo("1. Load M3U playlists")
-        typer.echo("2. Scan configured sources")
-        typer.echo("3. Filter football / Brazilian Portuguese channels")
-        typer.echo("4. Validate streams")
-        typer.echo("5. Export playlist")
-        typer.echo("6. Show report")
-        typer.echo("7. Run normal pipeline: scan -> filter -> validate -> export")
-        typer.echo("0. Exit")
-        choice = typer.prompt("Pick an action", default="0").strip()
-
-        if choice == "0":
-            typer.echo("Bye.")
-            return
-        if choice == "1":
-            _menu_load_m3u()
-        elif choice == "2":
-            _render_scan()
-        elif choice == "3":
-            _render_filter()
-        elif choice == "4":
-            _render_validate_streams()
-        elif choice == "5":
-            _menu_export()
-        elif choice == "6":
-            _render_report()
-        elif choice == "7":
-            _menu_run_pipeline()
-        else:
-            typer.echo("Unknown option. Pick a number from the menu.")
+# ---------------------------------------------------------------------------
+# Interactive menu commands (kept for direct CLI access too)
+# ---------------------------------------------------------------------------
 
 
-def _menu_load_m3u() -> None:
-    while True:
-        typer.echo()
-        typer.echo("Load M3U playlists")
-        typer.echo("==================")
-        typer.echo("1. Load from a file")
-        typer.echo("2. Load from a folder")
-        typer.echo("3. Download from an internet URL")
-        typer.echo("4. Search sports playlists for me")
-        typer.echo("0. Back")
-        choice = typer.prompt("Pick a load action", default="0").strip()
-
-        if choice == "0":
-            return
-        if choice == "1":
-            _menu_add_file()
-        elif choice == "2":
-            _menu_add_folder()
-        elif choice == "3":
-            _menu_download_url()
-        elif choice == "4":
-            _menu_download_public_playlists()
-        else:
-            typer.echo("Unknown option. Pick a number from the load menu.")
+@app.command()
+def scan() -> None:
+    """Scan configured sources and list all discovered channels."""
+    ConsoleReporter().render(Application().scan())
 
 
-def _menu_add_file() -> None:
-    path = Path(typer.prompt("M3U file"))
-    Application().add_source_file(path)
-    typer.echo(f"Added source file: {path}")
-
-
-def _menu_download_list() -> None:
-    url_list = Path(typer.prompt("URL list file", default="m3u-urls.txt"))
-    output_dir = Path(typer.prompt("Download folder", default="m3u"))
-    summary = Application().download_source_list(url_list, output_dir)
-    typer.echo(
-        f"Downloaded {summary.downloaded} valid playlist(s) into {output_dir}; "
-        f"skipped {summary.skipped}."
-    )
-
-
-def _menu_download_url() -> None:
-    url = typer.prompt("M3U/M3U8 URL").strip()
-    destination = Path("m3u")
-    summary = Application().download_source_url(url, destination)
-    typer.echo(
-        f"Downloaded {summary.downloaded} playlist(s) into {destination}; "
-        f"skipped {summary.skipped}."
-    )
-
-
-def _menu_add_folder() -> None:
-    path = Path(typer.prompt("M3U folder", default="m3u"))
-    imported = Application().add_source_folder(path)
-    typer.echo(f"Added {imported} playlist source(s) from folder: {path}")
-
-
-def _menu_download_public_playlists() -> None:
-    destination = Path("m3u")
-    summary = Application().download_public_playlists(destination)
-    typer.echo(
-        f"Downloaded {summary.downloaded} public playlist(s) into {destination}; "
-        f"skipped {summary.skipped}."
-    )
-
-
-def _menu_search_local_playlists() -> None:
-    search_root = Path(typer.prompt("Search folder", default="."))
-    destination = Path(typer.prompt("Copy found playlists to", default="m3u"))
-    summary = Application().search_and_add_local_playlists(search_root, destination)
-    typer.echo(
-        f"Found {summary.found} playlist file(s); copied {summary.copied} "
-        f"into {destination}; added {summary.added} source(s)."
-    )
-
-
-def _render_scan() -> None:
-    channels = Application().scan()
+@app.command("filter")
+def filter_command(
+    category: Annotated[str, typer.Option()] = "football",
+    language: Annotated[str | None, typer.Option()] = None,
+) -> None:
+    """Filter channels by category and/or language."""
+    channels = Application().filter_channels(category=category, language=language)
     ConsoleReporter().render(channels)
 
 
-def _render_filter() -> None:
-    channels = Application().filter_channels(category="football", language="pt-BR")
-    ConsoleReporter().render(channels)
+@app.command("validate-streams")
+def validate_streams() -> None:
+    """Probe all channel stream URLs and mark alive/broken."""
+    ConsoleReporter().render(Application().validate_streams())
 
 
-def _render_validate_streams() -> None:
-    channels = Application().validate_streams()
-    ConsoleReporter().render(channels)
+@app.command()
+def export(
+    format: Annotated[str, typer.Option()] = "m3u",
+    output: Annotated[Path, typer.Option()] = Path("futebol-worldcup.m3u"),
+) -> None:
+    """Export curated channels to a playlist file."""
+    Application().export(format, output)
+    typer.echo(f"Exported {format} to {output}")
 
 
-def _menu_export() -> None:
-    output = Path(typer.prompt("Output playlist", default="futebol-worldcup.m3u"))
-    Application().export("m3u", output)
-    typer.echo(f"Exported m3u to {output}")
-
-
-def _render_report() -> None:
+@app.command()
+def report() -> None:
+    """Show a summary report of all channels."""
     ConsoleReporter().render(Application().channels())
 
 
-def _menu_run_pipeline() -> None:
-    output = Path(typer.prompt("Output playlist", default="futebol-worldcup.m3u"))
-    typer.echo("Scanning sources...")
-    ConsoleReporter().render(Application().scan())
-    typer.echo("Filtering football / pt-BR channels...")
-    ConsoleReporter().render(Application().filter_channels(category="football", language="pt-BR"))
-    typer.echo("Validating streams...")
-    ConsoleReporter().render(Application().validate_streams())
-    Application().export("m3u", output)
-    typer.echo(f"Exported m3u to {output}")
+# ---------------------------------------------------------------------------
+# Source management
+# ---------------------------------------------------------------------------
+
+sources_app = typer.Typer(help="Manage playlist sources (add, download).")
+app.add_typer(sources_app, name="sources")
 
 
 @sources_app.command("add")
 def sources_add(
-    url: Annotated[str | None, typer.Option(help="Legal/user-provided M3U/M3U8 URL")] = None,
+    url: Annotated[str | None, typer.Option(help="M3U/M3U8 URL")] = None,
 ) -> None:
     if url is None:
         raise typer.BadParameter("--url is required")
@@ -184,7 +84,7 @@ def sources_add(
 
 @sources_app.command("add-file")
 def sources_add_file(
-    path: Annotated[Path, typer.Argument(help="Local M3U/M3U8 playlist file")],
+    path: Annotated[Path, typer.Argument(help="Local .m3u/.m3u8 file")],
 ) -> None:
     Application().add_source_file(path)
     typer.echo(f"Added source file: {path}")
@@ -192,35 +92,16 @@ def sources_add_file(
 
 @sources_app.command("add-folder")
 def sources_add_folder(
-    path: Annotated[Path, typer.Argument(help="Folder containing .m3u/.m3u8 playlist files")],
+    path: Annotated[Path, typer.Argument(help="Folder with .m3u files")],
 ) -> None:
     imported = Application().add_source_folder(path)
     typer.echo(f"Added {imported} playlist source(s) from folder: {path}")
 
 
-@sources_app.command("download-list")
-def sources_download_list(
-    url_list: Annotated[
-        Path,
-        typer.Argument(help="Text file with one legal/user-provided playlist URL per line"),
-    ],
-    output_dir: Annotated[
-        Path, typer.Option(help="Folder where downloaded M3U/M3U8 files are saved")
-    ] = Path("m3u"),
-) -> None:
-    summary = Application().download_source_list(url_list, output_dir)
-    typer.echo(
-        f"Downloaded {summary.downloaded} valid playlist(s) into {output_dir}; "
-        f"skipped {summary.skipped}."
-    )
-
-
 @sources_app.command("download-url")
 def sources_download_url(
-    url: Annotated[str, typer.Argument(help="Legal/user-provided M3U/M3U8 URL to download")],
-    output_dir: Annotated[
-        Path, typer.Option(help="Folder where downloaded M3U/M3U8 file is saved")
-    ] = Path("m3u"),
+    url: Annotated[str, typer.Argument(help="M3U/M3U8 URL to download")],
+    output_dir: Annotated[Path, typer.Option(help="Save folder")] = Path("m3u"),
 ) -> None:
     summary = Application().download_source_url(url, output_dir)
     typer.echo(
@@ -229,27 +110,10 @@ def sources_download_url(
     )
 
 
-@sources_app.command("search-local")
-def sources_search_local(
-    search_root: Annotated[
-        Path,
-        typer.Argument(help="Folder to recursively search for .m3u/.m3u8 files"),
-    ] = Path("."),
-    output_dir: Annotated[
-        Path, typer.Option(help="Folder where found playlist files are copied")
-    ] = Path("m3u"),
-) -> None:
-    summary = Application().search_and_add_local_playlists(search_root, output_dir)
-    typer.echo(
-        f"Found {summary.found} playlist file(s); copied {summary.copied} "
-        f"into {output_dir}; added {summary.added} source(s)."
-    )
-
-
 @sources_app.command("download-public")
 def sources_download_public(
     output_dir: Annotated[
-        Path, typer.Option(help="Folder where public M3U/M3U8 files are saved")
+        Path, typer.Option(help="Save folder")
     ] = Path("m3u"),
 ) -> None:
     summary = Application().download_public_playlists(output_dir)
@@ -259,37 +123,54 @@ def sources_download_public(
     )
 
 
-@app.command()
-def scan() -> None:
-    _render_scan()
+# ---------------------------------------------------------------------------
+# Channel curation commands
+# ---------------------------------------------------------------------------
+
+channels_app = typer.Typer(help="Curate channels (working flags, sync).")
+app.add_typer(channels_app, name="channels")
 
 
-@app.command("filter")
-def filter_command(
-    category: Annotated[str, typer.Option()] = "football",
-    language: Annotated[str | None, typer.Option()] = None,
+@channels_app.command("list")
+def channels_list(
+    show_all: Annotated[
+        bool, typer.Option("--all", help="Show also non-working channels")
+    ] = False,
 ) -> None:
-    channels = Application().filter_channels(category=category, language=language)
-    ConsoleReporter().render(channels)
+    """List indexed channels and their working status."""
+    entries = Application().channel_list(all_flag=show_all)
+    if not entries:
+        typer.echo("No channels indexed yet. Use 'futebol' menu → Load Servers.")
+        return
+    for entry in entries:
+        status = "✓" if entry.working else "✗"
+        typer.echo(f"  {status}  {entry.tvg_id} - {entry.name}")
 
 
-@app.command("validate-streams")
-def validate_streams() -> None:
-    _render_validate_streams()
-
-
-@app.command()
-def export(
-    format: Annotated[str, typer.Option()] = "m3u",
-    output: Annotated[Path, typer.Option()] = Path("futebol-worldcup.m3u"),
+@channels_app.command("working-on")
+def channels_working_on(
+    tvg_id: Annotated[str, typer.Argument(help="tvg-id of the channel")],
 ) -> None:
-    Application().export(format, output)
-    typer.echo(f"Exported {format} to {output}")
+    """Mark a channel as working (visible in frontend)."""
+    entry = Application().channel_set_working(tvg_id, True)
+    if entry:
+        typer.echo(f"Marked '{entry.name}' ({tvg_id}) as working.")
+    else:
+        typer.echo(f"Channel '{tvg_id}' not found.", err=True)
+        raise typer.Exit(code=1)
 
 
-@app.command()
-def report() -> None:
-    _render_report()
+@channels_app.command("working-off")
+def channels_working_off(
+    tvg_id: Annotated[str, typer.Argument(help="tvg-id of the channel")],
+) -> None:
+    """Mark a channel as NOT working (hidden from frontend)."""
+    entry = Application().channel_set_working(tvg_id, False)
+    if entry:
+        typer.echo(f"Marked '{entry.name}' ({tvg_id}) as NOT working.")
+    else:
+        typer.echo(f"Channel '{tvg_id}' not found.", err=True)
+        raise typer.Exit(code=1)
 
 
 def main() -> None:

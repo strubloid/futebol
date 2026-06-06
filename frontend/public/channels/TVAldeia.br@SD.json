@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVAldeia.br@SD",
+  "name": "TV Aldeia (720p)",
+  "streamUrl": "https://stmv1.samcast.com.br/giovane7843/giovane7843/playlist.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/rsfnv4Z.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

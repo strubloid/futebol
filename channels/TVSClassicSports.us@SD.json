@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVSClassicSports.us@SD",
+  "name": "TVS Classic Sports (360p)",
+  "streamUrl": "https://rpn.bozztv.com/gusa/gusa-tvs/index.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/auR0Mi6.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

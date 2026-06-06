@@ -1,0 +1,11 @@
+{
+  "tvgId": "StarSports1Hindi.in@SD",
+  "name": "Star Sports 1 Hindi (576p)",
+  "streamUrl": "http://103.253.18.58:8000/play/a03o",
+  "groupTitle": "Sports",
+  "logoUrl": "https://xstreamcp-assets-msp.streamready.in/assets/LIVETV/LIVECHANNEL/LIVETV_LIVETVCHANNEL_STAR_SPORTS_1_HINDI/images/LOGO_HD/image.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

@@ -1,0 +1,11 @@
+{
+  "tvgId": "SBTRondonopolis.br@SD",
+  "name": "SBT Rondonopolis",
+  "streamUrl": "https://video09.logicahost.com.br/sbtroo/sbtroo/playlist.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://upload.wikimedia.org/wikipedia/pt/d/d5/Logotipo_do_SBT_Rondon%C3%B3polis.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

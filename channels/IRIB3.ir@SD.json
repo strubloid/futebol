@@ -1,0 +1,11 @@
+{
+  "tvgId": "IRIB3.ir@SD",
+  "name": "IRIB3",
+  "streamUrl": "https://ncdn.telewebion.ir/tv3/live/playlist.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/IRIB_TV3_LOGO.svg/960px-IRIB_TV3_LOGO.svg.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

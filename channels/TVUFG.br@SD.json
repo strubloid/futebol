@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVUFG.br@SD",
+  "name": "TV UFG (720p) [Not 24/7]",
+  "streamUrl": "http://flash.softhost.com.br:1935/ufg/tvufgweb/playlist.m3u8",
+  "groupTitle": "Education",
+  "logoUrl": "https://i.imgur.com/Yp3dbJo.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

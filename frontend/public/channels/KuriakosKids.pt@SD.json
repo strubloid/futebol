@@ -1,0 +1,11 @@
+{
+  "tvgId": "KuriakosKids.pt@SD",
+  "name": "Kuriakos Kids (1080p)",
+  "streamUrl": "https://w2.manasat.com/kkids/smil:kkids.smil/playlist.m3u8",
+  "groupTitle": "Animation;Kids;Religious",
+  "logoUrl": "https://i.imgur.com/SRX6EPY.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

@@ -29,6 +29,15 @@
     </select>
   </label>
 
+  <label class="nonworking-toggle">
+    <input
+      type="checkbox"
+      [ngModel]="filters().showNonWorking"
+      (ngModelChange)="updateShowNonWorking($event)"
+    />
+    <span>Show broken</span>
+  </label>
+
   <label class="favorites-toggle">
     <input
       type="checkbox"
@@ -38,4 +47,6 @@
     <span class="heart" aria-hidden="true">♥</span>
     <span>Favorites only</span>
   </label>
+
+  
 </section>

@@ -1,10 +1,13 @@
+import json
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
 from futebol.config.settings import Settings
 from futebol.domain.enums.source_type import SourceType
+from futebol.domain.enums.stream_status import StreamStatus
 from futebol.domain.models.channel import Channel
+from futebol.domain.models.stream import Stream
 from futebol.domain.models.search_result import SearchResult
 from futebol.filters.base_filter import BaseFilter
 from futebol.filters.brazilian_portuguese_filter import BrazilianPortugueseFilter
@@ -16,6 +19,8 @@ from futebol.output.m3u_exporter import M3uExporter
 from futebol.repositories.channel_repository import ChannelRepository
 from futebol.repositories.source_repository import SourceRepository
 from futebol.services.channel_filter_service import ChannelFilterService
+from futebol.services.channel_index_service import ChannelIndexEntry, ChannelIndexService
+from futebol.services.channel_sync_service import ChannelSyncService, CleanSummary, SyncSummary
 from futebol.services.playlist_download_service import (
     PlaylistDownloadService,
     PlaylistDownloadSummary,
@@ -180,6 +185,230 @@ class Application:
 
     def channels(self) -> list[Channel]:
         return self._channel_repository.list()
+
+    # ------------------------------------------------------------------
+    # Channel index (curated channels/ directory)
+    # ------------------------------------------------------------------
+
+    def channels_sync_from_m3u(self) -> int:
+        """Read M3U files from m3u/ directory and build channels/ index."""
+        project_root = Path(__file__).resolve().parent.parent.parent
+        m3u_dir = project_root / "m3u"
+        channels_dir = project_root / "channels"
+        service = ChannelIndexService(m3u_dir, channels_dir)
+        count = service.sync_from_m3u()
+        # Also sync to frontend/public/channels/ for the Angular app
+        frontend_public = project_root / "frontend" / "public" / "channels"
+        if frontend_public.exists():
+            # Clear old files first
+            for old in frontend_public.iterdir():
+                if old.is_file():
+                    old.unlink()
+        else:
+            frontend_public.mkdir(parents=True, exist_ok=True)
+        for child in channels_dir.iterdir():
+            if child.is_file() and child.suffix == ".json":
+                target = frontend_public / child.name
+                target.write_text(child.read_text(encoding="utf-8"), encoding="utf-8")
+        return count
+
+    def channel_set_working(self, tvg_id: str, working: bool) -> ChannelIndexEntry | None:
+        """Toggle working status for a channel and return updated entry (or None)."""
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        service = ChannelIndexService(project_root / "m3u", channels_dir)
+        if not service.set_working(tvg_id, working):
+            return None
+        # Re-sync to frontend
+        self._sync_channels_to_frontend(project_root, channels_dir)
+        return next(
+            (e for e in service.list_all() if e.tvg_id == tvg_id),
+            None,
+        )
+
+    def channels_regenerate(self) -> int:
+        """Rebuild index.json from individual channel files and sync to frontend."""
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        service = ChannelIndexService(project_root / "m3u", channels_dir)
+        count = service.regenerate()
+        self._sync_channels_to_frontend(project_root, channels_dir)
+        return count
+
+    def channel_list(self, all_flag: bool = False) -> list[ChannelIndexEntry]:
+        """List indexed channels."""
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        service = ChannelIndexService(project_root / "m3u", channels_dir)
+        return service.list_all() if all_flag else service.list_working()
+
+    @staticmethod
+    def _sync_channels_to_frontend(project_root: Path, channels_dir: Path) -> None:
+        """Copy channel JSON files to frontend/public/channels/."""
+        frontend_public = project_root / "frontend" / "public" / "channels"
+        frontend_public.mkdir(parents=True, exist_ok=True)
+        for old in list(frontend_public.iterdir()):
+            if old.is_file():
+                old.unlink()
+        for child in channels_dir.iterdir():
+            if child.is_file() and child.suffix == ".json":
+                target = frontend_public / child.name
+                target.write_text(child.read_text(encoding="utf-8"), encoding="utf-8")
+
+    def channels_sync_to_app(self) -> int:
+        """Push the curated channels/ index into .futebol/channels.json.
+
+        Converts each ChannelIndexEntry into a Channel domain object so the
+        app's filter/validate/export pipeline uses the same curated data.
+        Returns the number of channels written.
+        """
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        m3u_dir = project_root / "m3u"
+        service = ChannelIndexService(m3u_dir, channels_dir)
+        entries = service.list_all()
+
+        channels: list[Channel] = []
+        for entry in entries:
+            channels.append(
+                Channel(
+                    name=entry.name,
+                    tvg_id=entry.tvg_id,
+                    tvg_logo=entry.logo_url,
+                    group_title=entry.group_title,
+                    source_url=f"channels/{entry.safe_filename}.json",
+                    source_type=SourceType.USER_PROVIDED,
+                    stream=Stream(url=entry.stream_url, status=StreamStatus.UNCHECKED),
+                    include_in_playlist=entry.working,
+                )
+            )
+
+        self._channel_repository.save(channels)
+        return len(channels)
+
+    def channels_sync_from_app(self) -> int:
+        """Detect channels deleted from .futebol/channels.json and mark them
+        working: false in the channels/ index.
+
+        Run this after manually removing entries from channels.json.
+        Returns the number of channels that were disabled.
+        """
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        m3u_dir = project_root / "m3u"
+        service = ChannelIndexService(m3u_dir, channels_dir)
+
+        # Collect tvg_ids from the current channels.json
+        app_channels = self._channel_repository.list()
+        app_tvg_ids: set[str] = set()
+        for ch in app_channels:
+            if ch.tvg_id:
+                app_tvg_ids.add(ch.tvg_id)
+            elif ch.name:
+                # Fallback: match by name if no tvg_id
+                app_tvg_ids.add(ch.name)
+
+        changed = service.sync_from_app_deletions(app_tvg_ids)
+        if changed:
+            self._sync_channels_to_frontend(project_root, channels_dir)
+        return changed
+
+    def channel_set_playlist(
+        self, tvg_id: str, playlist_name: str, playlist_id: str | None = None
+    ) -> ChannelIndexEntry | None:
+        """Change the playlist assignment for a channel."""
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        m3u_dir = project_root / "m3u"
+        service = ChannelIndexService(m3u_dir, channels_dir)
+        if not service.set_playlist(tvg_id, playlist_name, playlist_id):
+            return None
+        self._sync_channels_to_frontend(project_root, channels_dir)
+        return next(
+            (e for e in service.list_all() if e.tvg_id == tvg_id),
+            None,
+        )
+
+    @property
+    def data_dir(self) -> Path:
+        """Expose data directory for the UI layer."""
+        return self.settings.data_dir
+
+    def channels_load_and_test(self) -> tuple[int, int]:
+        """Load M3U files from m3u/, parse, and test every stream.
+
+        Returns (total_entries, working_entries).
+        """
+        project_root = Path(__file__).resolve().parent.parent.parent
+        m3u_dir = project_root / "m3u"
+        channels_dir = project_root / "channels"
+        service = ChannelIndexService(m3u_dir, channels_dir)
+        total, working = service.sync_from_m3u_with_stream_testing(
+            concurrency=20,
+            timeout=self.settings.stream_timeout_seconds,
+        )
+        # Sync to frontend
+        frontend_public = project_root / "frontend" / "public" / "channels"
+        if frontend_public.exists():
+            for old in frontend_public.iterdir():
+                if old.is_file():
+                    old.unlink()
+        else:
+            frontend_public.mkdir(parents=True, exist_ok=True)
+        for child in channels_dir.iterdir():
+            if child.is_file() and child.suffix == ".json":
+                target = frontend_public / child.name
+                target.write_text(child.read_text(encoding="utf-8"), encoding="utf-8")
+        return total, working
+
+    def channels_update_sync(self) -> SyncSummary:
+        """Backup and sync channels/ index into .futebol/channels.json.
+
+        Never creates duplicates — existing channels are overwritten by
+        their tvg_id.
+        """
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        m3u_dir = project_root / "m3u"
+        index_service = ChannelIndexService(m3u_dir, channels_dir)
+        sync_service = ChannelSyncService(
+            channel_index_service=index_service,
+            channel_repository=self._channel_repository,
+            settings=self.settings,
+        )
+        return sync_service.update_channels()
+
+    def channels_restore(self) -> int:
+        """Restore .futebol/channels.json from backup file.
+
+        Returns the number of channels restored.
+        """
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        m3u_dir = project_root / "m3u"
+        index_service = ChannelIndexService(m3u_dir, channels_dir)
+        sync_service = ChannelSyncService(
+            channel_index_service=index_service,
+            channel_repository=self._channel_repository,
+            settings=self.settings,
+        )
+        return sync_service.restore_channels()
+
+    def channels_clean_broken(self) -> CleanSummary:
+        """Permanently remove all non-working channels from channels/ and channels.json."""
+        project_root = Path(__file__).resolve().parent.parent.parent
+        channels_dir = project_root / "channels"
+        m3u_dir = project_root / "m3u"
+        index_service = ChannelIndexService(m3u_dir, channels_dir)
+        sync_service = ChannelSyncService(
+            channel_index_service=index_service,
+            channel_repository=self._channel_repository,
+            settings=self.settings,
+        )
+        result = sync_service.clean_broken()
+        # Sync the cleaned index to frontend
+        self._sync_channels_to_frontend(project_root, channels_dir)
+        return result
 
     def _playlist_files(self, path: Path) -> list[Path]:
         if not path.exists() or not path.is_dir():

@@ -1,0 +1,11 @@
+{
+  "tvgId": "Sportitalia.it@SD",
+  "name": "Sportitalia (1080p)",
+  "streamUrl": "https://edge-001.streamup.eu/sportitalia/sihd_abr/playlist.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/0CJGGgd.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

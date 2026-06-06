@@ -1,0 +1,11 @@
+{
+  "tvgId": "Canal25Jundiai.br@SD",
+  "name": "Canal 25 Jundiaí (404p) [Not 24/7]",
+  "streamUrl": "https://stream01.msolutionbrasil.com.br/hls/canal25/live.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/7igGMwH.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

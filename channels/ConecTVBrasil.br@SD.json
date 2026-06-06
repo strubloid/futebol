@@ -1,0 +1,11 @@
+{
+  "tvgId": "ConecTVBrasil.br@SD",
+  "name": "ConecTV Brasil (720p)",
+  "streamUrl": "https://stream01.msolutionbrasil.com.br/hls/conectv/live.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/XN6jjMR.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

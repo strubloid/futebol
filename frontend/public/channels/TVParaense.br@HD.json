@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVParaense.br@HD",
+  "name": "TV Paraense (720p)",
+  "streamUrl": "https://video09.logicahost.com.br/tvparaense/tvparaense/playlist.m3u",
+  "groupTitle": "Entertainment;Family;General;News",
+  "logoUrl": "https://duckduckgo.com/i/e408ea02.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

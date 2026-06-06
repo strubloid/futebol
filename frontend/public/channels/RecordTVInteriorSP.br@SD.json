@@ -1,0 +1,11 @@
+{
+  "tvgId": "RecordTVInteriorSP.br@SD",
+  "name": "RecordTV Interior SP",
+  "streamUrl": "http://200.77.176.130:8000/udp/224.0.0.4:49152",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/VcHy0fu.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

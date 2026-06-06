@@ -1,0 +1,11 @@
+{
+  "tvgId": "SICTV.br@SD",
+  "name": "SIC TV (720p)",
+  "streamUrl": "https://parecisfmlive.brasilstream.com.br/hls/parecisfmlive/index.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/mHxQyB2.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

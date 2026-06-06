@@ -1,0 +1,11 @@
+{
+  "tvgId": "ElHeddafTV.dz@SD",
+  "name": "El-Heddaf TV (1080i)",
+  "streamUrl": "https://live.elheddaftv.com:8081/elheddaf/index.mpd",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/cDkIDIA.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

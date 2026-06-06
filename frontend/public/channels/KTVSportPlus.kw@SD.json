@@ -1,0 +1,11 @@
+{
+  "tvgId": "KTVSportPlus.kw@SD",
+  "name": "KTV Sport Plus (1080p)",
+  "streamUrl": "https://kwtsplta.cdn.mangomolo.com/spl/smil:spl.stream.smil/chunklist.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/l4oX0gf.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

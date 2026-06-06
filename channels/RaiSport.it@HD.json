@@ -1,0 +1,11 @@
+{
+  "tvgId": "RaiSport.it@HD",
+  "name": "Rai Sport HD (1080p)",
+  "streamUrl": "https://srv1.adriatelekom.com/RaiSport/index.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/6PEevOM.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

@@ -31,4 +31,8 @@ export class ChannelFiltersComponent {
   protected updateFavoritesOnly(favoritesOnly: boolean): void {
     this.filtersChange.emit({ ...this.filters(), favoritesOnly });
   }
+
+  protected updateShowNonWorking(showNonWorking: boolean): void {
+    this.filtersChange.emit({ ...this.filters(), showNonWorking });
+  }
 }

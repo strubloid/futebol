@@ -1,0 +1,11 @@
+{
+  "tvgId": "JordanSport.jo@SD",
+  "name": "Jordan Sport (1080p)",
+  "streamUrl": "http://93.184.10.248/JordanSport/index.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/2EmrZPQ.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

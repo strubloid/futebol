@@ -1,0 +1,11 @@
+{
+  "tvgId": "DeportesTVC.hn@SD",
+  "name": "Deportes TVC (1080p)",
+  "streamUrl": "http://162.19.255.233:8080/play/UNbAl57p9hXZClOu56FCTYXmD-MOS3u5IUkeXPpBt80/m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/Y1t8xkL.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

@@ -2,21 +2,22 @@
   <section class="hero-panel">
     <div class="hero-copy">
       <p class="eyebrow">Futebol IPTV</p>
-      <h1>Channels loaded from your M3U folder</h1>
+      <h1>Channels from your curated index</h1>
       <p>
-        This dashboard reads the synced playlists, parses every channel, and lets you preview
-        what is happening in each stream.
+        This dashboard loads channels from <code>channels/index.json</code>.
+        Channels with <code>working: false</code> are hidden unless you toggle them on.
+        Run <code>futebol channels sync-from-m3u</code> to refresh the index.
       </p>
     </div>
 
-    <div class="stats-grid" aria-label="Playlist summary">
+    <div class="stats-grid" aria-label="Channel summary">
       <article>
         <span>{{ stats().totalPlaylists }}</span>
         <p>Playlists</p>
       </article>
       <article>
-        <span>{{ stats().totalChannels }}</span>
-        <p>Channels</p>
+        <span>{{ workingCount() }}</span>
+        <p>Working</p>
       </article>
       <article>
         <span>{{ stats().visibleChannels }}</span>
@@ -37,15 +38,15 @@
     </section>
   } @else if (isLoading()) {
     <section class="state-panel">
-      <h2>Loading M3U playlists...</h2>
-      <p>Reading the playlist manifest and parsing channel metadata.</p>
+      <h2>Loading channels index...</h2>
+      <p>Reading <code>channels/index.json</code>.</p>
     </section>
   } @else if (channels().length === 0) {
     <section class="state-panel">
-      <h2>No channels found yet</h2>
+      <h2>No channels found</h2>
       <p>
-        Add or download M3U playlists with the CLI, then run
-        <code>npm run sync:m3u</code> inside <code>frontend/</code>.
+        Run <code>futebol channels sync-from-m3u</code> from the project root,
+        then restart the frontend.
       </p>
     </section>
   } @else {

@@ -1,0 +1,11 @@
+{
+  "tvgId": "COMBrasil.br@SD",
+  "name": "COM Brasil (1080p) [Not 24/7]",
+  "streamUrl": "https://br5093.streamingdevideo.com.br/abc/abc/playlist.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/GrjGwKM.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVMarajoara.br@SD",
+  "name": "TV Marajoara (720p)",
+  "streamUrl": "https://tv02.zas.media:1936/tvmarajoara/tvmarajoara/playlist.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/9d9vBN7.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

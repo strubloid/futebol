@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVFuturo.br@SD",
+  "name": "TV Futuro (1080p)",
+  "streamUrl": "https://tv02.zas.media:1936/tvfuturo/tvfuturo/playlist.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/xonrNBf.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

@@ -1,0 +1,11 @@
+{
+  "tvgId": "MMATV.us@SD",
+  "name": "MMA-TV (576p)",
+  "streamUrl": "http://31.148.48.15/M1_Global/index.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/Qxco1eW.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

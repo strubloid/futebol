@@ -1,0 +1,11 @@
+{
+  "tvgId": "TraceBrazuca.fr@HD",
+  "name": "Trace Brasil (1080p)",
+  "streamUrl": "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01131-tracetv-tracebrazuca-samsungbr/playlist.m3u8",
+  "groupTitle": "Music",
+  "logoUrl": "https://i.imgur.com/DFBocPu.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

@@ -1,0 +1,11 @@
+{
+  "tvgId": "Canal38.br@SD",
+  "name": "Canal 38 (720p)",
+  "streamUrl": "https://cdn.jmvstream.com/w/LVW-8503/LVW8503_d0V5oduFlK/playlist.m3u8",
+  "groupTitle": "News",
+  "logoUrl": "https://i.imgur.com/co7TCWC.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVCamara.br@SD",
+  "name": "TV Câmara (1080p)",
+  "streamUrl": "https://stream3.camara.gov.br/tv1/manifest.m3u8",
+  "groupTitle": "Legislative",
+  "logoUrl": "https://i.imgur.com/Sdou1Ab.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

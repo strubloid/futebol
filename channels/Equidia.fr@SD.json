@@ -1,0 +1,11 @@
+{
+  "tvgId": "Equidia.fr@SD",
+  "name": "Equidia (1080p)",
+  "streamUrl": "https://raw.githubusercontent.com/Paradise-91/ParaTV/main/streams/equidia/live2.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/QPpbRcZ.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

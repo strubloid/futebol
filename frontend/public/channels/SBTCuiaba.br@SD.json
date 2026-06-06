@@ -1,0 +1,11 @@
+{
+  "tvgId": "SBTCuiaba.br@SD",
+  "name": "SBT Cuiaba",
+  "streamUrl": "https://video09.logicahost.com.br/sbtcuiaba/sbtcuiaba/playlist.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/EZJWQ3i.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

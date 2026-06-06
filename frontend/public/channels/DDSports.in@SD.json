@@ -1,0 +1,11 @@
+{
+  "tvgId": "DDSports.in@SD",
+  "name": "DD Sports SD (1080p)",
+  "streamUrl": "https://d3qs3d2rkhfqrt.cloudfront.net/out/v1/b17adfe543354fdd8d189b110617cddd/index.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://dtil.tmsimg.com/assets/s158255_ld_h15_aa.png?lock=720x540",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

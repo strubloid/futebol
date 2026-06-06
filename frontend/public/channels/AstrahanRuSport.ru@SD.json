@@ -1,0 +1,11 @@
+{
+  "tvgId": "AstrahanRuSport.ru@SD",
+  "name": "Астрахань.Ru Sport (720p)",
+  "streamUrl": "https://streaming.astrakhan.ru/astrakhanrusporthd/playlist.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/BKaEtqL.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

@@ -12,6 +12,7 @@ const CHANNEL: Channel = {
   tvgId: null,
   sourcePlaylistId: 'playlist-one',
   sourcePlaylistName: 'sports.m3u',
+  working: true,
 };
 
 describe('ChannelCardComponent', () => {

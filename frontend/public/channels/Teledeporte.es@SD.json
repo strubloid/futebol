@@ -1,0 +1,11 @@
+{
+  "tvgId": "Teledeporte.es@SD",
+  "name": "Teledeporte (1080p)",
+  "streamUrl": "http://92.176.119.180:2095/play/a16t",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.ibb.co/0jxLdjnY/TDP.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

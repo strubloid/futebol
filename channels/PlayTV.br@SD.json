@@ -1,0 +1,11 @@
+{
+  "tvgId": "PlayTV.br@SD",
+  "name": "Play TV (720p)",
+  "streamUrl": "https://isaocorp.cloudecast.com/playtv/index.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/Ikrj3lk.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

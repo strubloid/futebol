@@ -1,0 +1,11 @@
+{
+  "tvgId": "FloHockey.us@HD",
+  "name": "FloHockey 24/7 (1080p)",
+  "streamUrl": "https://amg02278-amg02278c2-flosports-worldwide-9916.playouts.now.amagi.tv/playlist.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://images.fubo.tv/channel-config-ui/station-logos/on-dark/flohockey-white.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

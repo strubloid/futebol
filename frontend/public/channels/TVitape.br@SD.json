@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVitape.br@SD",
+  "name": "TVitapé (720p)",
+  "streamUrl": "https://stream01.msolutionbrasil.com.br/hls/tvitape/live.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/XeqcwKe.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

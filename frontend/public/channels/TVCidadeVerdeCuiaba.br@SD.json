@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVCidadeVerdeCuiaba.br@SD",
+  "name": "TV Cidade Verde Cuiaba",
+  "streamUrl": "https://televisaocidadeverde.brasilstream.com.br/hls/televisaocidadeverde/index.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/e67h04h.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

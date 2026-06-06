@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVFronteira.br@SD",
+  "name": "TV Fronteira (480i)",
+  "streamUrl": "https://tvfronteira.brasilstream.com.br/hls/tvfronteira/index.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/NtcoW6G.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

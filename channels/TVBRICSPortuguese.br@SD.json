@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVBRICSPortuguese.br@SD",
+  "name": "TV BRICS Portuguese (1080p)",
+  "streamUrl": "https://porbrics.mediacdn.ru/cdn/brics/portuguese/playlist.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/vLpm8tN.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

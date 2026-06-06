@@ -1,0 +1,11 @@
+{
+  "tvgId": "Sport1.hu@SD",
+  "name": "Sport 1 (1280p)",
+  "streamUrl": "http://46.149.191.217:9005/play/a017",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/X5X3tKC.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

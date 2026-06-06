@@ -1,0 +1,11 @@
+{
+  "tvgId": "AlkassSHOOF.qa@SD",
+  "name": "Alkass SHOOF (1080p)",
+  "streamUrl": "https://liveeu-gcp.alkassdigital.net/shooflive/main.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://shoof.alkass.net/assets/images/shoof.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

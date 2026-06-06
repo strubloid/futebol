@@ -1,0 +1,11 @@
+{
+  "tvgId": "KpopTVPlay.br@SD",
+  "name": "KpopTV Play (576p)",
+  "streamUrl": "https://giatv.bozztv.com/giatv/giatv-kpoptvplay/kpoptvplay/playlist.m3u8",
+  "groupTitle": "Music",
+  "logoUrl": "https://i.imgur.com/Tf0vweF.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

@@ -1,0 +1,11 @@
+{
+  "tvgId": "AdessoTV.br@SD",
+  "name": "Adesso TV (720p)",
+  "streamUrl": "https://cdn.jmvstream.com/w/LVW-9715/LVW9715_12B26T62tm/playlist.m3u8",
+  "groupTitle": "General",
+  "logoUrl": "https://i.imgur.com/KgetM8j.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}

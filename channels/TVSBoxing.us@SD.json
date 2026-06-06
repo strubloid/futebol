@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVSBoxing.us@SD",
+  "name": "TVS Boxing (360p)",
+  "streamUrl": "https://rpn.bozztv.com/gusa/gusa-tvsboxing/index.m3u8",
+  "groupTitle": "Sports",
+  "logoUrl": "https://i.imgur.com/30ZoF75.png",
+  "sourcePlaylist": "sports-2",
+  "sourcePlaylistId": "sports-2",
+  "working": true,
+  "tags": []
+}

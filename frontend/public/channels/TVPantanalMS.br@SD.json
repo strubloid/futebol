@@ -1,0 +1,11 @@
+{
+  "tvgId": "TVPantanalMS.br@SD",
+  "name": "TV Pantanal MS (360p) [Not 24/7]",
+  "streamUrl": "https://5a2b083e9f360.streamlock.net/tvpantanal/tvpantanal.sdp/playlist.m3u8",
+  "groupTitle": "Undefined",
+  "logoUrl": "https://i.imgur.com/0FOmktl.png",
+  "sourcePlaylist": "br-2",
+  "sourcePlaylistId": "br-2",
+  "working": true,
+  "tags": []
+}
