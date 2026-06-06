@@ -1,0 +1,33 @@
+[project]
+name = "futebol"
+version = "0.1.0"
+description = "Legal IPTV discovery and playlist-management app for football content"
+requires-python = ">=3.12"
+dependencies = [
+  "httpx>=0.27.0",
+  "pydantic>=2.7.0",
+  "typer>=0.12.0",
+  "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.2.0", "ruff>=0.5.0", "mypy>=1.10.0"]
+
+[project.scripts]
+futebol = "futebol.app.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["futebol"]
