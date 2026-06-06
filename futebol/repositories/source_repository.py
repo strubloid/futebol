@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import builtins
 import json
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any, cast
 
@@ -39,7 +40,7 @@ class SourceRepository:
 
     def save(self, sources: builtins.list[SearchResult]) -> None:
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        data = [source.__dict__ | {"source_type": source.source_type.value} for source in sources]
+        data = [asdict(source) | {"source_type": source.source_type.value} for source in sources]
         self._path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
 
     def _optional_str(self, value: object) -> str | None:

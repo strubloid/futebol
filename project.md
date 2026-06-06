@@ -63,7 +63,7 @@ Example:
 
 ```bash
 pip install -e .
-futebol sources add-file ./playlist.m3u
+futebol sources add-folder ./m3u
 futebol scan
 futebol filter --category football --language pt-BR
 futebol validate-streams
@@ -81,7 +81,21 @@ From the project root:
 
 ```bash
 pip install -e .
-futebol --help
+futebol
+```
+
+Use `futebol --help` only when you want command reference for automation.
+
+Bulk-add all playlist files from a folder:
+
+```bash
+futebol sources add-folder ./m3u
+```
+
+Download legal/user-provided playlist URLs from a text file and add them automatically:
+
+```bash
+futebol sources download-list ./m3u-urls.txt --output-dir ./m3u
 ```
 
 Run a command:

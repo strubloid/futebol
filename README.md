@@ -116,6 +116,14 @@ FUTEBOL_ALLOW_UNKNOWN_SOURCES=false
 
 ## CLI usage
 
+Start the interactive menu:
+
+```bash
+futebol
+```
+
+Pick actions from the menu to download URL lists, add local M3U folders, scan, filter, validate, export, or report. The scriptable commands below remain available for automation.
+
 Add a legal/user-provided playlist URL:
 
 ```bash
@@ -127,6 +135,20 @@ Add a local user-provided playlist file:
 ```bash
 futebol sources add-file ./playlist.m3u
 ```
+
+Add every `.m3u`/`.m3u8` file from a folder recursively:
+
+```bash
+futebol sources add-folder ./m3u
+```
+
+Download legal/user-provided playlist URLs from a text file into `./m3u` and add them automatically:
+
+```bash
+futebol sources download-list ./m3u-urls.txt --output-dir ./m3u
+```
+
+The URL list file should contain one playlist URL per line. Blank lines and `#` comments are ignored. URLs matching blocked IPTV panel/piracy terms are skipped.
 
 Scan configured sources:
 

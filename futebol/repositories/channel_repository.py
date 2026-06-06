@@ -1,4 +1,5 @@
 import json
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any, cast
 
@@ -41,7 +42,7 @@ class ChannelRepository:
             "region": channel.region,
             "include_in_playlist": channel.include_in_playlist,
             "rejection_reason": channel.rejection_reason,
-            "stream": channel.stream.__dict__ | {"status": channel.stream.status.value},
+            "stream": asdict(channel.stream) | {"status": channel.stream.status.value},
         }
 
     def _from_dict(self, item: dict[str, object]) -> Channel:

@@ -16,11 +16,11 @@ class LegalSourceValidator:
     )
 
     def classify_url(self, url: str, declared_type: SourceType | None = None) -> SourceType:
-        if declared_type is not None:
-            return declared_type
         lowered = url.lower()
         if any(term in lowered for term in self._blocked_terms):
             return SourceType.BLOCKED_REJECTED
+        if declared_type is not None:
+            return declared_type
         host = urlparse(url).netloc.lower()
         if any(
             host == official or host.endswith(f".{official}") for official in self._official_hosts

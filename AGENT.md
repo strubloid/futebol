@@ -92,7 +92,13 @@ Install the project in editable mode:
 pip install -e .
 ```
 
-Run the CLI:
+Run the interactive menu:
+
+```bash
+futebol
+```
+
+Show command help for automation:
 
 ```bash
 futebol --help
@@ -102,6 +108,18 @@ Add a local playlist:
 
 ```bash
 futebol sources add-file ./playlist.m3u
+```
+
+Add all local playlists from the managed M3U folder:
+
+```bash
+futebol sources add-folder ./m3u
+```
+
+Download a user-provided list of legal playlist URLs into the managed M3U folder and add them:
+
+```bash
+futebol sources download-list ./m3u-urls.txt --output-dir ./m3u
 ```
 
 Add a legal/user-provided playlist URL:

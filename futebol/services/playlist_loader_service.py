@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from futebol.infrastructure.http.http_client import HttpClient
+from futebol.infrastructure.http.http_client import HttpClient, TextHttpClient
 from futebol.validators.url_validator import UrlValidator
 
 
 class PlaylistLoaderService:
     def __init__(
-        self, http_client: HttpClient | None = None, url_validator: UrlValidator | None = None
+        self, http_client: TextHttpClient | None = None, url_validator: UrlValidator | None = None
     ) -> None:
         self._http_client = http_client or HttpClient()
         self._url_validator = url_validator or UrlValidator()

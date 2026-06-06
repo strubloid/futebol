@@ -8,11 +8,16 @@ from futebol.filters.base_filter import BaseFilter
 from futebol.filters.brazilian_portuguese_filter import BrazilianPortugueseFilter
 from futebol.filters.football_filter import FootballFilter
 from futebol.filters.worldcup_filter import WorldCupFilter
+from futebol.infrastructure.http.http_client import TextHttpClient
 from futebol.output.json_exporter import JsonExporter
 from futebol.output.m3u_exporter import M3uExporter
 from futebol.repositories.channel_repository import ChannelRepository
 from futebol.repositories.source_repository import SourceRepository
 from futebol.services.channel_filter_service import ChannelFilterService
+from futebol.services.playlist_download_service import (
+    PlaylistDownloadService,
+    PlaylistDownloadSummary,
+)
 from futebol.services.playlist_loader_service import PlaylistLoaderService
 from futebol.services.playlist_parser_service import PlaylistParserService
 from futebol.services.stream_validator_service import StreamValidatorService
@@ -27,13 +32,15 @@ class Application:
         loader: PlaylistLoaderService | None = None,
         parser: PlaylistParserService | None = None,
         stream_validator: StreamValidatorService | None = None,
+        http_client: TextHttpClient | None = None,
     ) -> None:
         self.settings = settings or Settings.from_env()
         self._source_repository = SourceRepository(self.settings.data_dir / "sources.json")
         self._channel_repository = ChannelRepository(self.settings.data_dir / "channels.json")
-        self._loader = loader or PlaylistLoaderService()
+        self._loader = loader or PlaylistLoaderService(http_client=http_client)
         self._parser = parser or PlaylistParserService()
         self._stream_validator = stream_validator or StreamValidatorService()
+        self._download_service = PlaylistDownloadService(http_client=http_client)
         self._m3u_validator = M3uFormatValidator()
         self._legal_validator = LegalSourceValidator()
         self._filter_service = ChannelFilterService()
@@ -58,6 +65,18 @@ class Application:
                 legitimacy_note="User-provided local playlist file",
             )
         )
+
+    def add_source_folder(self, path: Path) -> int:
+        before = {source.url for source in self._source_repository.list()}
+        for playlist_path in self._playlist_files(path):
+            self.add_source_file(playlist_path)
+        after = {source.url for source in self._source_repository.list()}
+        return len(after - before)
+
+    def download_source_list(self, url_list: Path, output_dir: Path) -> PlaylistDownloadSummary:
+        summary = self._download_service.download_from_list(url_list, output_dir)
+        self.add_source_folder(output_dir)
+        return summary
 
     def scan(self) -> list[Channel]:
         channels: list[Channel] = []
@@ -116,3 +135,13 @@ class Application:
 
     def channels(self) -> list[Channel]:
         return self._channel_repository.list()
+
+    def _playlist_files(self, path: Path) -> list[Path]:
+        if not path.exists() or not path.is_dir():
+            return []
+        return sorted(
+            playlist_path
+            for playlist_path in path.rglob("*")
+            if playlist_path.is_file()
+            and playlist_path.suffix.lower() in {".m3u", ".m3u8"}
+        )

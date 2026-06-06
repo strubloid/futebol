@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Protocol
 
 import httpx
 
@@ -11,6 +12,11 @@ class HttpResponse:
     status_code: int
     text: str
     content_type: str | None = None
+
+
+class TextHttpClient(Protocol):
+    def get_text(self, url: str) -> HttpResponse:
+        pass
 
 
 class HttpClient:
