@@ -27,14 +27,13 @@ def run_interactive_menu() -> None:
         typer.echo()
         typer.echo("Futebol IPTV")
         typer.echo("============")
-        typer.echo("1. Download M3U URLs from a text file and add them")
-        typer.echo("2. Add all .m3u/.m3u8 files from a folder")
-        typer.echo("3. Scan configured sources")
-        typer.echo("4. Filter football / Brazilian Portuguese channels")
-        typer.echo("5. Validate streams")
-        typer.echo("6. Export playlist")
-        typer.echo("7. Show report")
-        typer.echo("8. Run normal pipeline: scan -> filter -> validate -> export")
+        typer.echo("1. Load M3U playlists")
+        typer.echo("2. Scan configured sources")
+        typer.echo("3. Filter football / Brazilian Portuguese channels")
+        typer.echo("4. Validate streams")
+        typer.echo("5. Export playlist")
+        typer.echo("6. Show report")
+        typer.echo("7. Run normal pipeline: scan -> filter -> validate -> export")
         typer.echo("0. Exit")
         choice = typer.prompt("Pick an action", default="0").strip()
 
@@ -42,23 +41,53 @@ def run_interactive_menu() -> None:
             typer.echo("Bye.")
             return
         if choice == "1":
-            _menu_download_list()
+            _menu_load_m3u()
         elif choice == "2":
-            _menu_add_folder()
-        elif choice == "3":
             _render_scan()
-        elif choice == "4":
+        elif choice == "3":
             _render_filter()
-        elif choice == "5":
+        elif choice == "4":
             _render_validate_streams()
-        elif choice == "6":
+        elif choice == "5":
             _menu_export()
-        elif choice == "7":
+        elif choice == "6":
             _render_report()
-        elif choice == "8":
+        elif choice == "7":
             _menu_run_pipeline()
         else:
             typer.echo("Unknown option. Pick a number from the menu.")
+
+
+def _menu_load_m3u() -> None:
+    while True:
+        typer.echo()
+        typer.echo("Load M3U playlists")
+        typer.echo("==================")
+        typer.echo("1. Load from a file")
+        typer.echo("2. Load from a folder")
+        typer.echo("3. Download from an internet URL")
+        typer.echo("4. Search sports playlists for me")
+        typer.echo("0. Back")
+        choice = typer.prompt("Pick a load action", default="0").strip()
+
+        if choice == "0":
+            return
+        if choice == "1":
+            _menu_add_file()
+        elif choice == "2":
+            _menu_add_folder()
+        elif choice == "3":
+            _menu_download_url()
+        elif choice == "4":
+            _menu_download_public_playlists()
+        else:
+            typer.echo("Unknown option. Pick a number from the load menu.")
+
+
+def _menu_add_file() -> None:
+    path = Path(typer.prompt("M3U file"))
+    Application().add_source_file(path)
+    typer.echo(f"Added source file: {path}")
 
 
 def _menu_download_list() -> None:
@@ -71,10 +100,39 @@ def _menu_download_list() -> None:
     )
 
 
+def _menu_download_url() -> None:
+    url = typer.prompt("M3U/M3U8 URL").strip()
+    destination = Path("m3u")
+    summary = Application().download_source_url(url, destination)
+    typer.echo(
+        f"Downloaded {summary.downloaded} playlist(s) into {destination}; "
+        f"skipped {summary.skipped}."
+    )
+
+
 def _menu_add_folder() -> None:
     path = Path(typer.prompt("M3U folder", default="m3u"))
     imported = Application().add_source_folder(path)
     typer.echo(f"Added {imported} playlist source(s) from folder: {path}")
+
+
+def _menu_download_public_playlists() -> None:
+    destination = Path("m3u")
+    summary = Application().download_public_playlists(destination)
+    typer.echo(
+        f"Downloaded {summary.downloaded} public playlist(s) into {destination}; "
+        f"skipped {summary.skipped}."
+    )
+
+
+def _menu_search_local_playlists() -> None:
+    search_root = Path(typer.prompt("Search folder", default="."))
+    destination = Path(typer.prompt("Copy found playlists to", default="m3u"))
+    summary = Application().search_and_add_local_playlists(search_root, destination)
+    typer.echo(
+        f"Found {summary.found} playlist file(s); copied {summary.copied} "
+        f"into {destination}; added {summary.added} source(s)."
+    )
 
 
 def _render_scan() -> None:
@@ -153,6 +211,50 @@ def sources_download_list(
     summary = Application().download_source_list(url_list, output_dir)
     typer.echo(
         f"Downloaded {summary.downloaded} valid playlist(s) into {output_dir}; "
+        f"skipped {summary.skipped}."
+    )
+
+
+@sources_app.command("download-url")
+def sources_download_url(
+    url: Annotated[str, typer.Argument(help="Legal/user-provided M3U/M3U8 URL to download")],
+    output_dir: Annotated[
+        Path, typer.Option(help="Folder where downloaded M3U/M3U8 file is saved")
+    ] = Path("m3u"),
+) -> None:
+    summary = Application().download_source_url(url, output_dir)
+    typer.echo(
+        f"Downloaded {summary.downloaded} playlist(s) into {output_dir}; "
+        f"skipped {summary.skipped}."
+    )
+
+
+@sources_app.command("search-local")
+def sources_search_local(
+    search_root: Annotated[
+        Path,
+        typer.Argument(help="Folder to recursively search for .m3u/.m3u8 files"),
+    ] = Path("."),
+    output_dir: Annotated[
+        Path, typer.Option(help="Folder where found playlist files are copied")
+    ] = Path("m3u"),
+) -> None:
+    summary = Application().search_and_add_local_playlists(search_root, output_dir)
+    typer.echo(
+        f"Found {summary.found} playlist file(s); copied {summary.copied} "
+        f"into {output_dir}; added {summary.added} source(s)."
+    )
+
+
+@sources_app.command("download-public")
+def sources_download_public(
+    output_dir: Annotated[
+        Path, typer.Option(help="Folder where public M3U/M3U8 files are saved")
+    ] = Path("m3u"),
+) -> None:
+    summary = Application().download_public_playlists(output_dir)
+    typer.echo(
+        f"Downloaded {summary.downloaded} public playlist(s) into {output_dir}; "
         f"skipped {summary.skipped}."
     )
 

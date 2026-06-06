@@ -122,7 +122,7 @@ Start the interactive menu:
 futebol
 ```
 
-Pick actions from the menu to download URL lists, add local M3U folders, scan, filter, validate, export, or report. The scriptable commands below remain available for automation.
+Pick `1. Load M3U playlists` to open a load submenu with choices for a single file, a folder, one internet URL, or `Search sports playlists for me` which automatically downloads curated sports/Brazil public playlists into `m3u/`. The scriptable commands below remain available for automation.
 
 Add a legal/user-provided playlist URL:
 
@@ -146,6 +146,24 @@ Download legal/user-provided playlist URLs from a text file into `./m3u` and add
 
 ```bash
 futebol sources download-list ./m3u-urls.txt --output-dir ./m3u
+```
+
+Download one legal/user-provided playlist URL into `./m3u` and add it automatically:
+
+```bash
+futebol sources download-url "https://example.org/legal-playlist.m3u" --output-dir ./m3u
+```
+
+Download curated public M3U playlists into `./m3u` and add them automatically:
+
+```bash
+futebol sources download-public --output-dir ./m3u
+```
+
+Search a folder recursively for existing `.m3u`/`.m3u8` files, copy them into `./m3u`, and add them automatically:
+
+```bash
+futebol sources search-local . --output-dir ./m3u
 ```
 
 The URL list file should contain one playlist URL per line. Blank lines and `#` comments are ignored. URLs matching blocked IPTV panel/piracy terms are skipped.

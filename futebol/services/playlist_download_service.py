@@ -32,10 +32,18 @@ class PlaylistDownloadService:
         self._legal_validator = legal_validator or LegalSourceValidator()
 
     def download_from_list(self, url_list: Path, output_dir: Path) -> PlaylistDownloadSummary:
+        return self.download_from_urls(self._read_urls(url_list), output_dir)
+
+    def download_from_urls(
+        self, urls: list[str], output_dir: Path
+    ) -> PlaylistDownloadSummary:
         output_dir.mkdir(parents=True, exist_ok=True)
         downloaded = 0
         skipped = 0
-        for url in self._read_urls(url_list):
+        for url in urls:
+            if not self._url_validator.is_valid(url):
+                skipped += 1
+                continue
             if self._legal_validator.classify_url(url) == SourceType.BLOCKED_REJECTED:
                 skipped += 1
                 continue

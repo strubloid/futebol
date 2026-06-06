@@ -63,7 +63,7 @@ Example:
 
 ```bash
 pip install -e .
-futebol sources add-folder ./m3u
+futebol sources download-public --output-dir ./m3u
 futebol scan
 futebol filter --category football --language pt-BR
 futebol validate-streams
@@ -96,6 +96,18 @@ Download legal/user-provided playlist URLs from a text file and add them automat
 
 ```bash
 futebol sources download-list ./m3u-urls.txt --output-dir ./m3u
+```
+
+Download curated public M3U playlists into `./m3u` and add them automatically:
+
+```bash
+futebol sources download-public --output-dir ./m3u
+```
+
+Search recursively for local `.m3u`/`.m3u8` files, copy them into `./m3u`, and add them automatically:
+
+```bash
+futebol sources search-local . --output-dir ./m3u
 ```
 
 Run a command:

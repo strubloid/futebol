@@ -122,6 +122,24 @@ Download a user-provided list of legal playlist URLs into the managed M3U folder
 futebol sources download-list ./m3u-urls.txt --output-dir ./m3u
 ```
 
+Download one legal/user-provided playlist URL into the managed M3U folder and add it:
+
+```bash
+futebol sources download-url "https://example.org/legal-playlist.m3u" --output-dir ./m3u
+```
+
+Search recursively for existing local `.m3u`/`.m3u8` files, copy them into the managed M3U folder, and add them:
+
+```bash
+futebol sources search-local . --output-dir ./m3u
+```
+
+Download curated public M3U playlists into the managed M3U folder and add them:
+
+```bash
+futebol sources download-public --output-dir ./m3u
+```
+
 Add a legal/user-provided playlist URL:
 
 ```bash

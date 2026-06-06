@@ -1,3 +1,5 @@
+import shutil
+from dataclasses import dataclass
 from pathlib import Path
 
 from futebol.config.settings import Settings
@@ -23,6 +25,13 @@ from futebol.services.playlist_parser_service import PlaylistParserService
 from futebol.services.stream_validator_service import StreamValidatorService
 from futebol.validators.legal_source_validator import LegalSourceValidator
 from futebol.validators.m3u_format_validator import M3uFormatValidator
+
+
+@dataclass(frozen=True)
+class LocalPlaylistSearchSummary:
+    found: int
+    copied: int
+    added: int
 
 
 class Application:
@@ -77,6 +86,44 @@ class Application:
         summary = self._download_service.download_from_list(url_list, output_dir)
         self.add_source_folder(output_dir)
         return summary
+
+    def download_source_url(self, url: str, output_dir: Path) -> PlaylistDownloadSummary:
+        summary = self._download_service.download_from_urls([url], output_dir)
+        self.add_source_folder(output_dir)
+        return summary
+
+    def download_public_playlists(self, output_dir: Path) -> PlaylistDownloadSummary:
+        public_playlist_urls = [
+            "https://iptv-org.github.io/iptv/categories/sports.m3u",
+            "https://iptv-org.github.io/iptv/countries/br.m3u",
+        ]
+        summary = self._download_service.download_from_urls(
+            public_playlist_urls, output_dir
+        )
+        self.add_source_folder(output_dir)
+        return summary
+
+    def search_and_add_local_playlists(
+        self, search_root: Path, destination_dir: Path
+    ) -> LocalPlaylistSearchSummary:
+        found_files = [
+            playlist_path
+            for playlist_path in self._playlist_files(search_root)
+            if not self._is_inside(playlist_path, destination_dir)
+        ]
+        destination_dir.mkdir(parents=True, exist_ok=True)
+        copied_paths: list[Path] = []
+        for playlist_path in found_files:
+            target = self._unique_destination(destination_dir, playlist_path.name)
+            shutil.copy2(playlist_path, target)
+            copied_paths.append(target)
+        before = {source.url for source in self._source_repository.list()}
+        for playlist_path in copied_paths:
+            self.add_source_file(playlist_path)
+        after = {source.url for source in self._source_repository.list()}
+        return LocalPlaylistSearchSummary(
+            found=len(found_files), copied=len(copied_paths), added=len(after - before)
+        )
 
     def scan(self) -> list[Channel]:
         channels: list[Channel] = []
@@ -145,3 +192,23 @@ class Application:
             if playlist_path.is_file()
             and playlist_path.suffix.lower() in {".m3u", ".m3u8"}
         )
+
+    def _is_inside(self, path: Path, folder: Path) -> bool:
+        try:
+            path.resolve().relative_to(folder.resolve())
+        except ValueError:
+            return False
+        return True
+
+    def _unique_destination(self, folder: Path, filename: str) -> Path:
+        target = folder / filename
+        if not target.exists():
+            return target
+        stem = target.stem
+        suffix = target.suffix
+        index = 2
+        while True:
+            candidate = folder / f"{stem}-{index}{suffix}"
+            if not candidate.exists():
+                return candidate
+            index += 1
