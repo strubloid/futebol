@@ -89,7 +89,7 @@ Do not add unrelated temp files or one-off scripts to the project root.
 Install the project in editable mode:
 
 ```bash
-python3 -m pip install -e '.[dev]'
+pip install -e .
 ```
 
 Run the CLI:
@@ -165,7 +165,7 @@ Recommended future commands if implemented:
 
 ```bash
 cd backend
-python3 -m pip install -e '.[dev]'
+pip install -e .
 python3 -m futebol.app.api
 ```
 

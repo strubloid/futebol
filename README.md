@@ -99,7 +99,7 @@ The `Application` class only orchestrates the flow. Parsing, validation, filteri
 Python 3.12+ is required.
 
 ```bash
-python3 -m pip install -e '.[dev]'
+pip install -e .
 ```
 
 ## Configuration

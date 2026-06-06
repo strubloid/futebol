@@ -62,7 +62,7 @@ A normal user flow is:
 Example:
 
 ```bash
-python3 -m pip install -e '.[dev]'
+pip install -e .
 futebol sources add-file ./playlist.m3u
 futebol scan
 futebol filter --category football --language pt-BR
@@ -80,7 +80,7 @@ There is no web frontend yet and no separate backend server yet. The current exe
 From the project root:
 
 ```bash
-python3 -m pip install -e '.[dev]'
+pip install -e .
 futebol --help
 ```
 
@@ -126,7 +126,7 @@ Potential future startup command:
 
 ```bash
 cd backend
-python3 -m pip install -e '.[dev]'
+pip install -e .
 python3 -m backend.api
 ```
 
