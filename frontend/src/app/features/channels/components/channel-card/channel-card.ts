@@ -9,6 +9,8 @@ import { Channel } from '../../models/channel.interface';
 })
 export class ChannelCardComponent {
   readonly channel = input.required<Channel>();
+  readonly isFavorite = input(false);
   readonly isSelected = input(false);
   readonly channelSelected = output<Channel>();
+  readonly favoriteToggled = output<Channel>();
 }

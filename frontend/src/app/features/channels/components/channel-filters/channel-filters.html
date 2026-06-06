@@ -28,4 +28,14 @@
       }
     </select>
   </label>
+
+  <label class="favorites-toggle">
+    <input
+      type="checkbox"
+      [ngModel]="filters().favoritesOnly"
+      (ngModelChange)="updateFavoritesOnly($event)"
+    />
+    <span class="heart" aria-hidden="true">♥</span>
+    <span>Favorites only</span>
+  </label>
 </section>

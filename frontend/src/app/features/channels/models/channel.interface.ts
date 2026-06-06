@@ -13,5 +13,6 @@ export interface ChannelStats {
   totalChannels: number;
   totalPlaylists: number;
   visibleChannels: number;
+  favoriteChannels: number;
   groups: string[];
 }

@@ -8,8 +8,10 @@
     @for (channel of channels(); track channel.id) {
       <app-channel-card
         [channel]="channel"
+        [isFavorite]="isFavorite(channel)"
         [isSelected]="channel.id === selectedChannelId()"
         (channelSelected)="channelSelected.emit($event)"
+        (favoriteToggled)="favoriteToggled.emit($event)"
       />
     } @empty {
       <article class="empty-list">

@@ -16,6 +16,7 @@ from futebol.validators.url_validator import UrlValidator
 class PlaylistDownloadSummary:
     downloaded: int = 0
     skipped: int = 0
+    downloaded_paths: tuple[Path, ...] = ()
 
 
 class PlaylistDownloadService:
@@ -40,6 +41,7 @@ class PlaylistDownloadService:
         output_dir.mkdir(parents=True, exist_ok=True)
         downloaded = 0
         skipped = 0
+        downloaded_paths: list[Path] = []
         for url in urls:
             if not self._url_validator.is_valid(url):
                 skipped += 1
@@ -53,8 +55,13 @@ class PlaylistDownloadService:
                 continue
             output_path = self._unique_output_path(output_dir, url)
             output_path.write_text(response.text, encoding="utf-8")
+            downloaded_paths.append(output_path)
             downloaded += 1
-        return PlaylistDownloadSummary(downloaded=downloaded, skipped=skipped)
+        return PlaylistDownloadSummary(
+            downloaded=downloaded,
+            skipped=skipped,
+            downloaded_paths=tuple(downloaded_paths),
+        )
 
     def _read_urls(self, url_list: Path) -> list[str]:
         urls: list[str] = []

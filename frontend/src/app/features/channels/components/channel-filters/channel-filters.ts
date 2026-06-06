@@ -27,4 +27,8 @@ export class ChannelFiltersComponent {
   protected updatePlaylist(playlistId: string): void {
     this.filtersChange.emit({ ...this.filters(), playlistId });
   }
+
+  protected updateFavoritesOnly(favoritesOnly: boolean): void {
+    this.filtersChange.emit({ ...this.filters(), favoritesOnly });
+  }
 }

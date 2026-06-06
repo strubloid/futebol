@@ -4,6 +4,7 @@ import { take } from 'rxjs';
 import { Channel } from '../../models/channel.interface';
 import { ChannelFilters } from '../../models/channel-filters.interface';
 import { PlaylistFile } from '../../models/playlist-file.interface';
+import { FavoriteChannelsService } from '../../services/favorite-channels.service';
 import { PlaylistLoaderService } from '../../services/playlist-loader.service';
 import { ChannelFiltersComponent } from '../../components/channel-filters/channel-filters';
 import { ChannelListComponent } from '../../components/channel-list/channel-list';
@@ -17,6 +18,7 @@ import { ChannelPlayerComponent } from '../../components/channel-player/channel-
 })
 export class ChannelsPage {
   private readonly playlistLoader = inject(PlaylistLoaderService);
+  private readonly favoriteChannels = inject(FavoriteChannelsService);
 
   protected readonly channels = signal<Channel[]>([]);
   protected readonly playlists = signal<PlaylistFile[]>([]);
@@ -27,7 +29,9 @@ export class ChannelsPage {
     searchTerm: '',
     groupTitle: 'all',
     playlistId: 'all',
+    favoritesOnly: false,
   });
+  protected readonly favoriteIds = this.favoriteChannels.favoriteIds;
 
   protected readonly groups = computed(() =>
     [...new Set(this.channels().map((channel) => channel.groupTitle))].sort((left, right) =>
@@ -48,8 +52,9 @@ export class ChannelsPage {
       const matchesGroup = filters.groupTitle === 'all' || channel.groupTitle === filters.groupTitle;
       const matchesPlaylist =
         filters.playlistId === 'all' || channel.sourcePlaylistId === filters.playlistId;
+      const matchesFavorite = !filters.favoritesOnly || this.favoriteChannels.isFavorite(channel.id);
 
-      return matchesText && matchesGroup && matchesPlaylist;
+      return matchesText && matchesGroup && matchesPlaylist && matchesFavorite;
     });
   });
 
@@ -57,6 +62,7 @@ export class ChannelsPage {
     totalChannels: this.channels().length,
     totalPlaylists: this.playlists().length,
     visibleChannels: this.filteredChannels().length,
+    favoriteChannels: this.favoriteIds().length,
     groups: this.groups(),
   }));
 
@@ -97,5 +103,9 @@ export class ChannelsPage {
 
   protected selectChannel(channel: Channel): void {
     this.selectedChannel.set(channel);
+  }
+
+  protected toggleFavorite(channel: Channel): void {
+    this.favoriteChannels.toggleFavorite(channel.id);
   }
 }

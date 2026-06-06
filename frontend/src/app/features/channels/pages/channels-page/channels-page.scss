@@ -55,7 +55,7 @@ app-channel-filters {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(86px, 1fr));
+  grid-template-columns: repeat(4, minmax(76px, 1fr));
   gap: 10px;
 }
 
@@ -144,7 +144,7 @@ app-channel-filters {
   }
 
   .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

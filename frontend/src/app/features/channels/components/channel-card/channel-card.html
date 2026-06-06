@@ -1,19 +1,29 @@
-<button
-  type="button"
-  class="channel-card"
-  [class.selected]="isSelected()"
-  (click)="channelSelected.emit(channel())"
->
-  <span class="logo-frame">
-    @if (channel().logoUrl) {
-      <img [src]="channel().logoUrl" [alt]="channel().name + ' logo'" loading="lazy" />
-    } @else {
-      <span>{{ channel().name.slice(0, 2).toUpperCase() }}</span>
-    }
-  </span>
+<article class="channel-card" [class.selected]="isSelected()" [class.favorite]="isFavorite()">
+  <button type="button" class="channel-main" (click)="channelSelected.emit(channel())">
+    <span class="logo-frame">
+      @if (channel().logoUrl) {
+        <img [src]="channel().logoUrl" [alt]="channel().name + ' logo'" loading="lazy" />
+      } @else {
+        <span>{{ channel().name.slice(0, 2).toUpperCase() }}</span>
+      }
+    </span>
 
-  <span class="channel-copy">
-    <strong>{{ channel().name }}</strong>
-    <small>{{ channel().groupTitle }} · {{ channel().sourcePlaylistName }}</small>
-  </span>
-</button>
+    <span class="channel-copy">
+      <strong>{{ channel().name }}</strong>
+      <small>{{ channel().groupTitle }} · {{ channel().sourcePlaylistName }}</small>
+    </span>
+  </button>
+
+  <button
+    type="button"
+    class="favorite-button"
+    [class.active]="isFavorite()"
+    [attr.aria-pressed]="isFavorite()"
+    [attr.aria-label]="
+      isFavorite() ? 'Remove ' + channel().name + ' from favorites' : 'Add ' + channel().name + ' to favorites'
+    "
+    (click)="favoriteToggled.emit(channel())"
+  >
+    ♥
+  </button>
+</article>

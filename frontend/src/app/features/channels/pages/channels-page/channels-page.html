@@ -22,6 +22,10 @@
         <span>{{ stats().visibleChannels }}</span>
         <p>Visible</p>
       </article>
+      <article>
+        <span>{{ stats().favoriteChannels }}</span>
+        <p>Favorites</p>
+      </article>
     </div>
   </section>
 
@@ -55,8 +59,10 @@
     <section class="content-grid">
       <app-channel-list
         [channels]="filteredChannels()"
+        [favoriteIds]="favoriteIds()"
         [selectedChannelId]="selectedChannel()?.id ?? null"
         (channelSelected)="selectChannel($event)"
+        (favoriteToggled)="toggleFavorite($event)"
       />
 
       <app-channel-player [channel]="selectedChannel()" />

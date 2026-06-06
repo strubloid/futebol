@@ -1,15 +1,13 @@
 .channel-card {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) 38px;
+  gap: 8px;
   align-items: center;
   width: 100%;
   padding: 10px;
   border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 18px;
   background: rgba(2, 6, 23, 0.42);
-  color: inherit;
-  text-align: left;
   transition:
     border-color 160ms ease,
     background 160ms ease,
@@ -21,6 +19,24 @@
   border-color: rgba(34, 211, 238, 0.54);
   background: rgba(8, 47, 73, 0.46);
   transform: translateY(-1px);
+}
+
+.channel-card.favorite {
+  border-color: rgba(244, 114, 182, 0.36);
+}
+
+.channel-main {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .logo-frame {
@@ -63,4 +79,31 @@ small {
   margin-top: 4px;
   color: #93a4ba;
   font-size: 0.78rem;
+}
+
+.favorite-button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(244, 114, 182, 0.28);
+  border-radius: 999px;
+  background: rgba(76, 5, 25, 0.3);
+  color: rgba(251, 113, 133, 0.7);
+  cursor: pointer;
+  font-size: 1.15rem;
+  line-height: 1;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.favorite-button:hover,
+.favorite-button.active {
+  border-color: rgba(244, 114, 182, 0.8);
+  background: rgba(157, 23, 77, 0.55);
+  color: #fb7185;
+  transform: scale(1.04);
 }

@@ -11,6 +11,12 @@ import { ChannelCardComponent } from '../channel-card/channel-card';
 })
 export class ChannelListComponent {
   readonly channels = input.required<Channel[]>();
+  readonly favoriteIds = input<string[]>([]);
   readonly selectedChannelId = input<string | null>(null);
   readonly channelSelected = output<Channel>();
+  readonly favoriteToggled = output<Channel>();
+
+  isFavorite(channel: Channel): boolean {
+    return this.favoriteIds().includes(channel.id);
+  }
 }

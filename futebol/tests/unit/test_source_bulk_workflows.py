@@ -90,6 +90,39 @@ def test_download_public_playlists_saves_curated_m3u_files_to_folder(tmp_path: P
     assert {Path(source.url).name for source in sources} == {"sports.m3u", "br.m3u"}
 
 
+def test_download_public_playlists_adds_only_files_downloaded_and_validated_now(
+    tmp_path: Path,
+) -> None:
+    destination = tmp_path / "m3u"
+    destination.mkdir()
+    (destination / "old-invalid.m3u").write_text("not a playlist", encoding="utf-8")
+    http_client = FakeHttpClient(
+        {
+            "https://iptv-org.github.io/iptv/categories/sports.m3u": HttpResponse(
+                url="https://iptv-org.github.io/iptv/categories/sports.m3u",
+                status_code=200,
+                text=VALID_M3U,
+                content_type="audio/x-mpegurl",
+            ),
+            "https://iptv-org.github.io/iptv/countries/br.m3u": HttpResponse(
+                url="https://iptv-org.github.io/iptv/countries/br.m3u",
+                status_code=200,
+                text="downloaded but not actually m3u content",
+                content_type="text/plain",
+            ),
+        }
+    )
+
+    result = make_app(tmp_path, http_client=http_client).download_public_playlists(destination)
+
+    assert result.downloaded == 1
+    assert result.skipped == 1
+    assert (destination / "sports.m3u").read_text(encoding="utf-8") == VALID_M3U
+    assert not (destination / "br.m3u").exists()
+    sources = make_app(tmp_path)._source_repository.list()
+    assert [Path(source.url).name for source in sources] == ["sports.m3u"]
+
+
 def test_download_source_url_saves_one_valid_m3u_file_and_adds_it(tmp_path: Path) -> None:
     download_dir = tmp_path / "downloaded-m3u"
     http_client = FakeHttpClient(

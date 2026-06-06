@@ -77,19 +77,18 @@ class Application:
 
     def add_source_folder(self, path: Path) -> int:
         before = {source.url for source in self._source_repository.list()}
-        for playlist_path in self._playlist_files(path):
-            self.add_source_file(playlist_path)
+        self._add_source_files(self._playlist_files(path))
         after = {source.url for source in self._source_repository.list()}
         return len(after - before)
 
     def download_source_list(self, url_list: Path, output_dir: Path) -> PlaylistDownloadSummary:
         summary = self._download_service.download_from_list(url_list, output_dir)
-        self.add_source_folder(output_dir)
+        self._add_source_files(summary.downloaded_paths)
         return summary
 
     def download_source_url(self, url: str, output_dir: Path) -> PlaylistDownloadSummary:
         summary = self._download_service.download_from_urls([url], output_dir)
-        self.add_source_folder(output_dir)
+        self._add_source_files(summary.downloaded_paths)
         return summary
 
     def download_public_playlists(self, output_dir: Path) -> PlaylistDownloadSummary:
@@ -100,7 +99,7 @@ class Application:
         summary = self._download_service.download_from_urls(
             public_playlist_urls, output_dir
         )
-        self.add_source_folder(output_dir)
+        self._add_source_files(summary.downloaded_paths)
         return summary
 
     def search_and_add_local_playlists(
@@ -118,8 +117,7 @@ class Application:
             shutil.copy2(playlist_path, target)
             copied_paths.append(target)
         before = {source.url for source in self._source_repository.list()}
-        for playlist_path in copied_paths:
-            self.add_source_file(playlist_path)
+        self._add_source_files(copied_paths)
         after = {source.url for source in self._source_repository.list()}
         return LocalPlaylistSearchSummary(
             found=len(found_files), copied=len(copied_paths), added=len(after - before)
@@ -192,6 +190,18 @@ class Application:
             if playlist_path.is_file()
             and playlist_path.suffix.lower() in {".m3u", ".m3u8"}
         )
+
+    def _add_source_files(self, playlist_paths: tuple[Path, ...] | list[Path]) -> None:
+        for playlist_path in playlist_paths:
+            if self._is_valid_playlist_file(playlist_path):
+                self.add_source_file(playlist_path)
+
+    def _is_valid_playlist_file(self, playlist_path: Path) -> bool:
+        try:
+            content = playlist_path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            return False
+        return self._m3u_validator.is_valid(content)
 
     def _is_inside(self, path: Path, folder: Path) -> bool:
         try:
