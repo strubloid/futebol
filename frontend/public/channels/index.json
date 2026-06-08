@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T15:44:07.406341+00:00",
+  "generatedAt": "2026-06-08T19:22:19.507132+00:00",
   "channels": [
     {
       "tvgId": "1001Noites.br@SD",
@@ -3157,6 +3157,369 @@
       "sourcePlaylistId": "sports",
       "working": true,
       "tags": []
+    },
+    {
+      "tvgId": "FIFAPlus.uk@Portuguese",
+      "name": "FIFA+ Portuguese (720p)",
+      "streamUrl": "https://e3be9ac5.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctYnJfRklGQVBsdXNQb3J0dWd1ZXNlX0hMUw/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+      "sourcePlaylist": "br",
+      "sourcePlaylistId": "br",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RedBullTV.at@BR",
+      "name": "Red Bull TV BR (1080p)",
+      "streamUrl": "https://d03ae6b5c6724c24867e97a3dc04934a.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-1026-WORBBRPTFAST-WHALETVPLUS/1026/hls/master/playlist.m3u8",
+      "groupTitle": "Outdoor;Sports",
+      "logoUrl": "https://jiotvimages.cdn.jio.com/dare_images/images/Red_Bull_TV.png",
+      "sourcePlaylist": "br",
+      "sourcePlaylistId": "br",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "TikTokRadioBrasil.br@HD",
+      "name": "TikTok Radio Brasil (1080p)",
+      "streamUrl": "https://d1bl6tskrpq9ze.cloudfront.net/hls/master.m3u8?ads.xumo_channelId=99992529",
+      "groupTitle": "Music",
+      "logoUrl": "https://static.wikia.nocookie.net/logopedia/images/f/f4/TikTok_Radio.svg",
+      "sourcePlaylist": "br",
+      "sourcePlaylistId": "br",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FIFAPlus.uk@English",
+      "name": "FIFA+ (720p)",
+      "streamUrl": "https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FIFAPlus.uk@French",
+      "name": "FIFA+ French (720p)",
+      "streamUrl": "https://37b4c228.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWZyX0ZJRkFQbHVzRnJlbmNoX0hMUw/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FIFAPlus.uk@German",
+      "name": "FIFA+ German (720p)",
+      "streamUrl": "https://4397879b.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWRlX0ZJRkFQbHVzR2VybWFuX0hMUw/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FIFAPlus.uk@HispanicAmerica",
+      "name": "FIFA+ Hispanic America (720p)",
+      "streamUrl": "https://6c849fb3.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctbXhfRklGQVBsdXNTcGFuaXNoLTFfSExT/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FIFAPlus.uk@Italy",
+      "name": "FIFA+ Italy (720p)",
+      "streamUrl": "https://5d95f7d7.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWl0X0ZJRkFQbHVzSXRhbGlhbl9ITFM/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FIFAPlus.uk@Spain",
+      "name": "FIFA+ Spain (720p)",
+      "streamUrl": "https://d63fabad.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWVzX0ZJRkFQbHVzU3BhbmlzaF9ITFM/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FIFAPlus.uk@UnitedStates",
+      "name": "FIFA+ United States (720p)",
+      "streamUrl": "https://d2w9q46ikgrcwx.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-of5cbk3sav3w5/v1/sysdata_s_p_a_fifa_7/samsungheadend_us/latest/main/hls/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/FIFA%2B_(2025).svg/960px-FIFA%2B_(2025).svg.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FIFAPlusWomen.uk@English",
+      "name": "FIFA+ Women (720p)",
+      "streamUrl": "https://cffda8ff.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/U2Ftc3VuZy1nYl9GSUZBUGx1c3dvbWVuX0hMUw/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/xy9ZxVO.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FITE247.us@SD",
+      "name": "FITE 24/7 (1080p)",
+      "streamUrl": "https://d3d85c7qkywguj.cloudfront.net/scheduler/scheduleMaster/263.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/ESV6qgH.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "FUELTV.pt@US",
+      "name": "FUEL TV (1080p)",
+      "streamUrl": "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/fuel-tv/playlist.m3u8?ads.vf=gbdyvfXODOK",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/I8mviBy.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": [],
+      "extraHeaders": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"
+      }
+    },
+    {
+      "tvgId": "GloryKickboxing.us@Poland",
+      "name": "GLORY Kickboxing (720p)",
+      "streamUrl": "https://6f972d29.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0dsb3J5S2lja2JveGluZ19ITFM/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/tS7Ub7i.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "HardKnocks.ca@SD",
+      "name": "Hard Knocks (1080p)",
+      "streamUrl": "https://d3uyzhwvmemdyf.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/Hard-Knocks-DistroTV/109.m3u8?ads.vf=6pOF6kgy418",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/nt9B6jx.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": [],
+      "extraHeaders": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"
+      }
+    },
+    {
+      "tvgId": "KozoomTV.fr@SD",
+      "name": "KOZOOM TV (1080p)",
+      "streamUrl": "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/kozoom-tv/manifest.m3u8?ads.vf=CAJPqH6STD0",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/M1Ee79b.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": [],
+      "extraHeaders": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"
+      }
+    },
+    {
+      "tvgId": "NBCSportsNOW.us@SD",
+      "name": "NBC Sports NOW (1080p)",
+      "streamUrl": "https://d4whmvwm0rdvi.cloudfront.net/10007/99993008/hls/master.m3u8?ads.xumo_channelId=99993008",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/EzNf2Yx.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RadioTurrialbaTVSports.cr@SD",
+      "name": "Radio Turrialba TV Sports (720p)",
+      "streamUrl": "https://sc2.escuela4.com/live/92974f62a8d5e5caf8f6d1c98fe9b2615f2238c5.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/2ZcUXbE.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": [],
+      "extraHeaders": {
+        "Referer": "https://iblups.com/",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      }
+    },
+    {
+      "tvgId": "RealitateaSportiva.ro@SD",
+      "name": "Realitatea Sportiva (720p)",
+      "streamUrl": "https://stream.realitatea.net/realitatea/sportiva_md/ts:playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/BaEyZto.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RedBullTV.at@EUMENA",
+      "name": "Red Bull TV (1080p)",
+      "streamUrl": "https://3ea22335.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWdiX1JlZEJ1bGxUVl9ITFM/playlist.m3u8",
+      "groupTitle": "Outdoor;Sports",
+      "logoUrl": "https://jiotvimages.cdn.jio.com/dare_images/images/Red_Bull_TV.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RedBullTV.at@AU",
+      "name": "Red Bull TV AU (1080p)",
+      "streamUrl": "https://db34cc6127ac459db55cab5f97cd66b9.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-680-WORBAUENFAST-WHALETVPLUS/680/whaletvplus/hls/master/playlist.m3u8",
+      "groupTitle": "Outdoor;Sports",
+      "logoUrl": "https://jiotvimages.cdn.jio.com/dare_images/images/Red_Bull_TV.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RedBullTV.at@DE",
+      "name": "Red Bull TV DE (1080p)",
+      "streamUrl": "https://46cfeb23c7f74853bba7a256655a3119.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-582-WORBDACHDEFAST-WHALETVPLUS/582/whaletvplus/hls/master/playlist.m3u8",
+      "groupTitle": "Outdoor;Sports",
+      "logoUrl": "https://jiotvimages.cdn.jio.com/dare_images/images/Red_Bull_TV.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RedBullTV.at@ES",
+      "name": "Red Bull TV ES (1080p)",
+      "streamUrl": "https://886bd3fbc782459f8de7555d32d7e9ce.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-957-WORBLATAMESFAST-WHALETVPLUS/957/whaletvplus/hls/master/playlist.m3u8",
+      "groupTitle": "Outdoor;Sports",
+      "logoUrl": "https://jiotvimages.cdn.jio.com/dare_images/images/Red_Bull_TV.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RedBullTV.at@UK",
+      "name": "Red Bull TV UK (1080p)",
+      "streamUrl": "https://1a3566cb46914c5499fbc86fbc4ac87e.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-932-WORBUKENFAST-WHALETVPLUS/932/whaletvplus/hls/master/playlist.m3u8",
+      "groupTitle": "Outdoor;Sports",
+      "logoUrl": "https://jiotvimages.cdn.jio.com/dare_images/images/Red_Bull_TV.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RedBullTV.at@US",
+      "name": "Red Bull TV US (1080p)",
+      "streamUrl": "https://0b73ace69ebb45eaa249bb87837cb958.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-644-WORBUSENFAST-LG_US/644/lgtv/hls/master/playlist.m3u8",
+      "groupTitle": "Outdoor;Sports",
+      "logoUrl": "https://jiotvimages.cdn.jio.com/dare_images/images/Red_Bull_TV.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "RightNowTV.us@SD",
+      "name": "Right Now Tv (720p)",
+      "streamUrl": "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/right-now-tv/playlist.m3u8?ads.vf=XXIrbw6_Odq",
+      "groupTitle": "Entertainment;Sports",
+      "logoUrl": "https://i.imgur.com/OxbIla4.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": [],
+      "extraHeaders": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"
+      }
+    },
+    {
+      "tvgId": "SportsTVPlus.us@SD",
+      "name": "SportsTVPlus (1080p)",
+      "streamUrl": "https://d3s7x6kmqcnb6b.cloudfront.net/d/distro001a/NKXQTWMREOB2XFJRLAHO/hls3/now,-1m/m.m3u8?ads.vf=SqsoCl37PjC",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/EyCDhgN.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": [],
+      "extraHeaders": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"
+      }
+    },
+    {
+      "tvgId": "talkSPORT.uk@SD",
+      "name": "talkSPORT (1080p)",
+      "streamUrl": "https://af7a8b4e.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/TEctZ2JfdGFsa1NQT1JUX0hMUw/playlist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/en/9/9d/Talksport_logo.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "TSNTheOcho.ca@SD",
+      "name": "TSN The Ocho (1080p)",
+      "streamUrl": "https://d3pnbvng3bx2nj.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-rds8g35qfqrnv/TSN_The_Ocho.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://tvpnlogopus.samsungcloud.tv/platform/image/sourcelogo/vc/00/02/34/CA1400003R3_20240709T002034SQUARE.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "WorldPokerTour.us@Poland",
+      "name": "World Poker Tour (1080p)",
+      "streamUrl": "https://d39g1vxj2ef6in.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod-rakuten-stitched/playlist.m3u8?ads.xumo_channelId=88883102",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/98kLMjj.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "WorldPokerTour.us@US",
+      "name": "World Poker Tour (1080p)",
+      "streamUrl": "https://d3w4n3hhseniak.cloudfront.net/v1/master/9d062541f2ff39b5c0f48b743c6411d25f62fc25/WPT-DistroTV/150.m3u8?ads.vf=EHEabFVWNva",
+      "groupTitle": "Sports",
+      "logoUrl": "https://i.imgur.com/98kLMjj.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": [],
+      "extraHeaders": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0"
+      }
     }
   ]
 }

@@ -12,7 +12,11 @@ from __future__ import annotations
 import json
 import re
 import shutil
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import socket
+import time
+import urllib.error
+import urllib.request
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed, wait
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from hashlib import md5
@@ -37,9 +41,11 @@ class ChannelIndexEntry:
     source_playlist_id: str  # e.g. "sports-m3u" or "br-m3u"
     working: bool = True
     tags: list[str] = field(default_factory=list)
+    extra_headers: dict[str, str] = field(default_factory=dict)
+    """Extra HTTP headers the stream needs (e.g. Referer, User-Agent)."""
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        d: dict[str, Any] = {
             "tvgId": self.tvg_id,
             "name": self.name,
             "streamUrl": self.stream_url,
@@ -50,6 +56,9 @@ class ChannelIndexEntry:
             "working": self.working,
             "tags": list(self.tags),
         }
+        if self.extra_headers:
+            d["extraHeaders"] = dict(self.extra_headers)
+        return d
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ChannelIndexEntry:
@@ -63,6 +72,7 @@ class ChannelIndexEntry:
             source_playlist_id=data["sourcePlaylistId"],
             working=data.get("working", True),
             tags=list(data.get("tags", [])),
+            extra_headers=dict(data.get("extraHeaders", {})),
         )
 
 
@@ -196,7 +206,7 @@ class ChannelIndexService:
 
             def test_and_return(idx: int, entry: ChannelIndexEntry, old_url: str | None) -> tuple[int, ChannelIndexEntry, bool]:
                 """Test stream, return (idx, entry_or_fallback, changed)."""
-                is_alive = self._test_stream_url(entry.stream_url, timeout)
+                is_alive = self._test_stream_url(entry.stream_url, timeout, entry.extra_headers)
                 if is_alive:
                     return idx, entry, True
                 # Stream failed — if this was a URL update, keep the old entry
@@ -208,20 +218,50 @@ class ChannelIndexService:
                 entry.working = False
                 return idx, entry, False
 
-            future_map = {}
-            for j_idx, (parsed_idx, entry, old_url) in enumerate(test_jobs):
-                future_map[executor.submit(test_and_return, parsed_idx, entry, old_url)] = parsed_idx
+            future_map: dict[Future, tuple[int, ChannelIndexEntry, str | None]] = {}
+            for parsed_idx, entry, old_url in test_jobs:
+                future_map[executor.submit(test_and_return, parsed_idx, entry, old_url)] = (
+                    parsed_idx, entry, old_url,
+                )
                 job_details[parsed_idx] = old_url
 
-            for future in as_completed(future_map):
-                parsed_idx, result_entry, was_live = future.result()
-                tested_results[parsed_idx] = result_entry
-                if was_live:
-                    old_url = job_details.get(parsed_idx)
-                    if old_url is None:
-                        new_working_count += 1
-                    else:
-                        updated_url_count += 1
+            deadline = time.monotonic() + timeout + 5.0
+            while future_map:
+                remaining_time = deadline - time.monotonic()
+                if remaining_time <= 0:
+                    for f in future_map:
+                        f.cancel()
+                    break
+
+                done, not_done = wait(
+                    future_map.keys(),
+                    timeout=min(remaining_time, 2.0),
+                )
+                for future in done:
+                    parsed_idx, result_entry, was_live = future.result(timeout=0.1)
+                    tested_results[parsed_idx] = result_entry
+                    future_map.pop(future, None)
+                    if was_live:
+                        old_url = job_details.get(parsed_idx)
+                        if old_url is None:
+                            new_working_count += 1
+                        else:
+                            updated_url_count += 1
+
+                # On last stretch, cancel stragglers
+                if not_done and remaining_time <= 2.0:
+                    for f in not_done:
+                        f.cancel()
+                    cancel_done, _ = wait(not_done, timeout=0.5)
+                    for future in cancel_done:
+                        parsed_idx, result_entry, was_live = future.result(timeout=0.1)
+                        tested_results[parsed_idx] = result_entry
+                        future_map.pop(future, None)
+                    for f in list(future_map.keys()):
+                        parsed_idx = future_map[f][0]
+                        f.cancel()
+                        future_map.pop(f, None)
+                        # Don't add failed channel
 
         # 5. Build final list: existing order + new working channels appended
         final_entries: list[ChannelIndexEntry] = []
@@ -283,18 +323,53 @@ class ChannelIndexService:
         if before == 0:
             return UpdateChannelsResult(before=0, after=0, removed=0)
 
-        # Test all streams in parallel
+        # Test all streams in parallel with hard timeout per channel
+        # We use wait() with a deadline so stuck threads don't hang forever
         with ThreadPoolExecutor(max_workers=concurrency) as executor:
-            future_map = {
-                executor.submit(self._test_stream_url, e.stream_url, timeout): i
+            future_map: dict[Future, int] = {
+                executor.submit(
+                    self._test_stream_url, e.stream_url, timeout, e.extra_headers
+                ): i
                 for i, e in enumerate(all_entries)
             }
-            for future in as_completed(future_map):
-                idx = future_map[future]
-                try:
-                    all_entries[idx].working = future.result()
-                except Exception:
-                    all_entries[idx].working = False
+
+            deadline = time.monotonic() + timeout + 5.0  # 5s grace beyond per-request timeout
+            while future_map:
+                remaining_time = deadline - time.monotonic()
+                if remaining_time <= 0:
+                    # Hard deadline hit — cancel everything still pending
+                    for f in future_map:
+                        f.cancel()
+                    break
+
+                done, not_done = wait(
+                    future_map.keys(),
+                    timeout=min(remaining_time, 2.0),
+                )
+                for future in done:
+                    idx = future_map.pop(future)
+                    try:
+                        all_entries[idx].working = future.result(timeout=0.1)
+                    except Exception:
+                        all_entries[idx].working = False
+
+                # Mark any still-pending as not working (will be cancelled on next loop
+                # or when deadline hits)
+                if not_done and remaining_time <= 2.0:
+                    for f in not_done:
+                        f.cancel()
+                    done, _ = wait(not_done, timeout=0.5)
+                    for future in done:
+                        idx = future_map.pop(future)
+                        try:
+                            all_entries[idx].working = future.result(timeout=0.1)
+                        except Exception:
+                            all_entries[idx].working = False
+                    # Anything left gets marked not working but already popped
+                    for f in list(future_map.keys()):
+                        idx = future_map.pop(f)
+                        f.cancel()
+                        all_entries[idx].working = False
 
         # Keep only working channels
         working = [e for e in all_entries if e.working]
@@ -356,20 +431,48 @@ class ChannelIndexService:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _test_stream_url(url: str, timeout: float = 8.0) -> bool:
-        """Probe a stream URL — returns True if reachable (2xx/3xx)."""
+    def _test_stream_url(
+        url: str,
+        timeout: float = 8.0,
+        extra_headers: dict[str, str] | None = None,
+    ) -> bool:
+        """Probe a stream URL — returns True if reachable AND content is valid.
+
+        For HLS streams (.m3u8) this actually downloads the first bytes and
+        verifies the content starts with #EXTM3U — not just the HTTP status.
+
+        Uses ``urllib.request`` which respects ``socket.setdefaulttimeout()``
+        reliably — unlike httpx which can hang under high concurrency.
+        """
+        headers: dict[str, str] = {
+            "User-Agent": (
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            ),
+        }
+        if extra_headers:
+            headers.update(extra_headers)
         try:
-            with httpx.Client(follow_redirects=True, timeout=timeout) as client:
-                try:
-                    resp = client.head(url)
-                except httpx.HTTPError:
-                    return False
-                if resp.status_code in {405, 403}:
-                    try:
-                        resp = client.get(url, headers={"Range": "bytes=0-256"})
-                    except httpx.HTTPError:
+            old_timeout = socket.getdefaulttimeout()
+            socket.setdefaulttimeout(timeout)
+            try:
+                req = urllib.request.Request(url, headers=headers, method="GET")
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
+                    if not (200 <= resp.status < 400):
                         return False
-                return 200 <= resp.status_code < 400
+                    # For HLS streams, validate actual playlist content
+                    if url.endswith(".m3u8") or "/playlist" in url:
+                        body = resp.read(500).decode("utf-8", errors="replace")
+                        if not body.startswith("#EXTM3U"):
+                            return False
+                    return True
+            except urllib.error.HTTPError as e:
+                # HTTPError still has status code info (e.g. 403, 404)
+                return False
+            except (urllib.error.URLError, OSError):
+                return False
+            finally:
+                socket.setdefaulttimeout(old_timeout)
         except Exception:
             return False
 
@@ -388,9 +491,18 @@ class ChannelIndexService:
         lines = [line.strip() for line in content.splitlines() if line.strip()]
 
         pending_attrs: dict[str, str | None] | None = None
+        pending_extra_headers: dict[str, str] = {}  # from preceding #EXTVLCOPT lines
 
         for line in lines:
-            if line.startswith("#EXTVLCOPT") or line.startswith("#EXTHTTP"):
+            if line.startswith("#EXTVLCOPT"):
+                # Parse http-referrer and http-user-agent directives
+                vlcopt = line[len("#EXTVLCOPT:"):].strip()
+                if vlcopt.startswith("http-referrer="):
+                    pending_extra_headers["Referer"] = vlcopt[len("http-referrer="):]
+                elif vlcopt.startswith("http-user-agent="):
+                    pending_extra_headers["User-Agent"] = vlcopt[len("http-user-agent="):]
+                continue
+            if line.startswith("#EXTHTTP"):
                 continue
             if line.startswith("#EXTINF"):
                 pending_attrs = self._parse_extinf(line)
@@ -405,6 +517,17 @@ class ChannelIndexService:
             if not tvg_id or tvg_id == "None":
                 tvg_id = "ch-" + md5(line.encode()).hexdigest()[:12]
 
+            # Build extra headers from both #EXTINF attrs and #EXTVLCOPT lines
+            extra_headers: dict[str, str] = {}
+            http_ref = pending_attrs.get("http-referrer")
+            if http_ref and http_ref != "None":
+                extra_headers["Referer"] = http_ref
+            http_ua = pending_attrs.get("http-user-agent")
+            if http_ua and http_ua != "None":
+                extra_headers["User-Agent"] = http_ua
+            # #EXTVLCOPT values override #EXTINF attributes
+            extra_headers.update(pending_extra_headers)
+
             entries.append(
                 ChannelIndexEntry(
                     tvg_id=tvg_id,
@@ -414,9 +537,11 @@ class ChannelIndexService:
                     logo_url=pending_attrs.get("tvg-logo"),
                     source_playlist=playlist_name,
                     source_playlist_id=playlist_id,
+                    extra_headers=extra_headers,
                 )
             )
             pending_attrs = None
+            pending_extra_headers = {}
 
         return entries
 

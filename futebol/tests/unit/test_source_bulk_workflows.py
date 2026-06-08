@@ -49,7 +49,7 @@ def _patch_test_stream(
     """
     working = working_urls or set()
 
-    def mock_test(url: str, timeout: float = 8.0) -> bool:  # noqa: ARG001
+    def mock_test(url: str, timeout: float = 8.0, extra_headers: dict | None = None) -> bool:  # noqa: ARG001
         return url in working
 
     service._test_stream_url = mock_test  # type: ignore[method-assign]
