@@ -218,4 +218,4 @@ __marimo__/
 .streamlit/secrets.toml
 
 m3u/
-.futebol/
+.futebol/*.json

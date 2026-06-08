@@ -1,15 +1,19 @@
 {
-  "generatedAt": "2026-06-06T16:28:47.322500+00:00",
-  "totalChannels": 277,
-  "workingChannels": 277,
+  "generatedAt": "2026-06-08T14:38:24.694068+00:00",
+  "totalChannels": 525,
+  "workingChannels": 287,
   "playlists": [
     {
-      "id": "br-2",
-      "name": "br-2"
+      "id": "br",
+      "name": "br"
     },
     {
-      "id": "sports-2",
-      "name": "sports-2"
+      "id": "canais-brasil",
+      "name": "canais-brasil"
+    },
+    {
+      "id": "sports",
+      "name": "sports"
     }
   ]
 }

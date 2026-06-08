@@ -49,7 +49,7 @@ writeFileSync(
 
 console.log(`Synced ${playlists.length} M3U playlist file(s) into frontend/public/m3u`);
 
-// ── Sync channels/ index ────────────────────────────────────────
+// ── Sync channels/ index (single file) ──────────────────────────
 
 const channelsSourceDir = resolve(projectRoot, 'channels');
 const publicChannelsDir = resolve(frontendRoot, 'public', 'channels');
@@ -64,18 +64,19 @@ if (existsSync(channelsSourceDir)) {
     }
   }
 
-  // Copy all JSON files from channels/ to public/channels/
+  // Only copy aggregate files (index.json + manifest.json).
+  // Individual per-channel JSON files are no longer created.
   let copiedCount = 0;
-  for (const entry of readdirSync(channelsSourceDir, { withFileTypes: true })) {
-    if (entry.isFile() && entry.name.endsWith('.json')) {
-      const source = join(channelsSourceDir, entry.name);
-      const target = join(publicChannelsDir, entry.name);
+  for (const fileName of ['index.json', 'manifest.json']) {
+    const source = join(channelsSourceDir, fileName);
+    const target = join(publicChannelsDir, fileName);
+    if (existsSync(source)) {
       copyFileSync(source, target);
       copiedCount++;
     }
   }
 
-  console.log(`Synced ${copiedCount} channel JSON file(s) into frontend/public/channels`);
+  console.log(`Synced ${copiedCount} channel aggregate file(s) into frontend/public/channels`);
 } else {
   console.log('No channels/ directory found at project root, skipping.');
 }

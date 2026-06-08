@@ -1,7 +1,7 @@
-"""Bridge between the curated channels/ directory and .futebol/channels.json.
+"""Bridge between the curated channels/ index and .futebol/channels.json.
 
 Handles backup, deduplicated updates, restore from backup, and cleanup
-of non-working channels.
+of non-working channels from the aggregate index (no individual files).
 """
 
 from __future__ import annotations
@@ -37,13 +37,13 @@ class CleanSummary:
 
 
 class ChannelSyncService:
-    """Bridge between channels/ (curated index) and .futebol/channels.json.
+    """Bridge between channels/index.json (curated) and .futebol/channels.json.
 
     Responsibilities:
     - Backup ``.futebol/channels.json`` to ``.futebol/channels_backup.json``
     - Sync the ``channels/`` index into ``channels.json`` with dedup by tvg_id
     - Restore ``channels.json`` from a backup
-    - Remove all ``working: false`` channels from both stores
+    - Remove all ``working: false`` channels from the aggregate index
     """
 
     def __init__(
@@ -62,7 +62,7 @@ class ChannelSyncService:
     # ------------------------------------------------------------------
 
     def update_channels(self) -> SyncSummary:
-        """Backup ``channels.json``, then merge channels/ into it.
+        """Backup ``channels.json``, then merge channels/ index into it.
 
         *Never* creates duplicates — if a tvg_id already exists in
         ``channels.json``, the entry is **overwritten** (updated) with
@@ -124,15 +124,14 @@ class ChannelSyncService:
         return len(channels)
 
     def clean_broken(self) -> CleanSummary:
-        """Remove all ``working: false`` channels from both stores.
+        """Remove all ``working: false`` channels from the index.
 
-        1. Reads the index and identifies non-working entries.
-        2. Deletes their individual files from ``channels/``.
-        3. Regenerates the index (removing them from aggregate files).
-        4. Syncs to frontend.
-        5. Removes them from ``.futebol/channels.json``.
+        1. Reads the aggregate index and filters out non-working entries.
+        2. Rewrites the aggregate index without them.
+        3. Removes those channels from ``.futebol/channels.json``.
 
-        Returns counts of removed vs remaining channels.
+        No individual per-channel files exist to delete.
+        Returns counts of removed vs remaining.
         """
         all_entries = self._index_service.list_all()
         broken = [e for e in all_entries if not e.working]
@@ -141,29 +140,17 @@ class ChannelSyncService:
         if not broken:
             return CleanSummary(removed=0, remaining=len(healthy))
 
-        # Delete individual files
-        channels_dir = self._index_service.channels_dir
-        for entry in broken:
-            file_path = channels_dir / f"{entry.safe_filename}.json"
-            if file_path.exists():
-                file_path.unlink()
-
-        # Regenerate index (writes index.json + manifest.json without broken)
-        self._index_service._write_entries(healthy)
+        # Rewrite the aggregate index without broken entries
+        self._index_service._write_index(healthy)
 
         # Remove broken channels from channels.json
         app_channels = self._channel_repo.list()
         tvg_ids_to_keep = {e.tvg_id for e in healthy}
-        filtered = [
-            ch
-            for ch in app_channels
-            if (ch.tvg_id or ch.name) not in tvg_ids_to_keep
-            if (ch.tvg_id or ch.name)
-        ]
         healthy_app = [
             ch
             for ch in app_channels
             if (ch.tvg_id or ch.name) in tvg_ids_to_keep
+            if (ch.tvg_id or ch.name)
         ]
         self._channel_repo.save(healthy_app)
 
@@ -174,7 +161,7 @@ class ChannelSyncService:
     # ------------------------------------------------------------------
 
     def _backup_channels_json(self) -> Path | None:
-        """Copy ``.futebol/channels.json`` → ``.futebol/channels_backup.json``.
+        """Copy ``.futebol/channels.json`` -> ``.futebol/channels_backup.json``.
 
         Returns the backup path, or None if no source file exists.
         """
@@ -193,7 +180,7 @@ class ChannelSyncService:
             tvg_id=entry.tvg_id,
             tvg_logo=entry.logo_url,
             group_title=entry.group_title,
-            source_url=f"channels/{entry.safe_filename}.json",
+            source_url="channels/index.json",
             source_type=SourceType.USER_PROVIDED,
             stream=Stream(url=entry.stream_url, status=StreamStatus.UNCHECKED),
             include_in_playlist=entry.working,

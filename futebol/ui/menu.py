@@ -196,7 +196,8 @@ def _run_load_servers(app: Application) -> None:
 
 
 def _load_and_test(app: Application) -> None:
-    """Parse M3U files from ``m3u/``, test streams, build channel index."""
+    """Parse M3U files from ``m3u/``, test streams, build channel index,
+    and sync to frontend — all in one call."""
     _console.print()
     with Progress(
         SpinnerColumn(),
@@ -207,7 +208,7 @@ def _load_and_test(app: Application) -> None:
         console=_console,
     ) as progress:
         task = progress.add_task(
-            "[yellow]Testing streams...[/]", total=None
+            "[yellow]Testing streams & syncing to frontend...[/]", total=None
         )
 
         total, working = app.channels_load_and_test()
@@ -222,10 +223,6 @@ def _load_and_test(app: Application) -> None:
     if broken:
         parts.append(f"[red]{broken} broken[/]")
     _console.print(f"   ✅  Load complete — {', '.join(parts)}")
-
-    # Sync to frontend
-    app.channels_regenerate()
-    _console.print("   📋  Frontend synced.")
 
 
 def _load_from_file(app: Application) -> None:
@@ -444,7 +441,6 @@ def _run_do_it_all(app: Application) -> None:
             f"[green]{working} working[/], "
             f"[red]{broken} broken[/]"
         )
-        app.channels_regenerate()
     else:
         _console.print("[yellow]   No M3U files found in m3u/ — skipping load[/]")
 
