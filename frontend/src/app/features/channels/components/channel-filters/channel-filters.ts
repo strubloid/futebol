@@ -12,16 +12,11 @@ import { PlaylistFile } from '../../models/playlist-file.interface';
 })
 export class ChannelFiltersComponent {
   readonly filters = input.required<ChannelFilters>();
-  readonly groups = input.required<string[]>();
   readonly playlists = input.required<PlaylistFile[]>();
   readonly filtersChange = output<ChannelFilters>();
 
   protected updateSearchTerm(searchTerm: string): void {
     this.filtersChange.emit({ ...this.filters(), searchTerm });
-  }
-
-  protected updateGroup(groupTitle: string): void {
-    this.filtersChange.emit({ ...this.filters(), groupTitle });
   }
 
   protected updatePlaylist(playlistId: string): void {

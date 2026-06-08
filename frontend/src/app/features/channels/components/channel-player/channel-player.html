@@ -1,39 +1,35 @@
-<section class="player-panel" aria-label="Channel preview">
-  @if (channel(); as selectedChannel) {
-    <div class="player-header">
-      <div>
-        <p>Now previewing</p>
-        <h2>{{ selectedChannel.name }}</h2>
-      </div>
-      <span>{{ selectedChannel.groupTitle }}</span>
+<div class="player-overlay" [class.fullscreen]="isFullscreen">
+  <!-- Top bar -->
+  <div class="player-topbar">
+    <button type="button" class="close-btn" (click)="closePlayer()" aria-label="Close player">
+      ✕
+    </button>
+    <div class="channel-id">
+      <span class="prompt">▶</span>
+      <span class="name">{{ channel()?.name }}</span>
     </div>
+    <button type="button" class="fs-btn" (click)="toggleFullscreen()" aria-label="Toggle fullscreen">
+      {{ isFullscreen ? '⊞' : '⛶' }}
+    </button>
+  </div>
 
-    <div class="video-frame">
-      <video #videoElement controls playsinline></video>
-    </div>
+  <!-- Video area -->
+  <div class="player-viewport">
+    <video #videoElement muted playsinline></video>
 
-    <p class="playback-message">{{ playbackMessage }}</p>
-
-    <dl class="channel-details">
-      <div>
-        <dt>Playlist</dt>
-        <dd>{{ selectedChannel.sourcePlaylistName }}</dd>
+    @if (!ready()) {
+      <div class="loading-overlay">
+        <span class="loading-text">$ connecting...</span>
+        <span class="loading-bar"></span>
       </div>
-      <div>
-        <dt>Stream URL</dt>
-        <dd><a [href]="selectedChannel.streamUrl" target="_blank" rel="noreferrer">Open stream</a></dd>
-      </div>
-      @if (selectedChannel.tvgId) {
-        <div>
-          <dt>TVG ID</dt>
-          <dd>{{ selectedChannel.tvgId }}</dd>
-        </div>
-      }
-    </dl>
-  } @else {
-    <div class="empty-player">
-      <h2>Select a channel</h2>
-      <p>{{ playbackMessage }}</p>
-    </div>
-  }
-</section>
+    }
+  </div>
+
+  <!-- Bottom info -->
+  <div class="player-bottombar">
+    <span class="source">{{ channel()?.sourcePlaylistName }}</span>
+    <span class="url-hint">
+      <a [href]="channel()?.streamUrl" target="_blank" rel="noreferrer">[stream]</a>
+    </span>
+  </div>
+</div>

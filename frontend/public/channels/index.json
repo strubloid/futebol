@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T15:38:59.223334+00:00",
+  "generatedAt": "2026-06-08T15:44:07.406341+00:00",
   "channels": [
     {
       "tvgId": "1001Noites.br@SD",
@@ -3142,6 +3142,17 @@
       "streamUrl": "http://31.148.48.15/Futbol_HD/index.m3u8",
       "groupTitle": "Sports",
       "logoUrl": "https://i.imgur.com/pEuaZVx.png",
+      "sourcePlaylist": "sports",
+      "sourcePlaylistId": "sports",
+      "working": true,
+      "tags": []
+    },
+    {
+      "tvgId": "HTVSports.vn@SD",
+      "name": "HTV Thể thao (1080p) [Geo-blocked]",
+      "streamUrl": "https://live.fptplay53.net/epzhd1/htvcthethao_vhls.smil/chunklist.m3u8",
+      "groupTitle": "Sports",
+      "logoUrl": "https://upload.wikimedia.org/wikipedia/vi/3/3f/HTV_THETHAO_2014.png",
       "sourcePlaylist": "sports",
       "sourcePlaylistId": "sports",
       "working": true,

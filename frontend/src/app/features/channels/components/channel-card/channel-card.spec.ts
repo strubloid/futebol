@@ -27,7 +27,21 @@ describe('ChannelCardComponent', () => {
     fixture.componentRef.setInput('channel', CHANNEL);
   });
 
-  it('shows a heart favorite button and emits favorite toggles without selecting the card', () => {
+  it('emits channelSelected when the card button is clicked', () => {
+    const component = fixture.componentInstance;
+    const selectedSpy = vi.fn();
+    component.channelSelected.subscribe(selectedSpy);
+    fixture.detectChanges();
+
+    const card = (fixture.nativeElement as HTMLElement).querySelector(
+      '.channel-card',
+    ) as HTMLButtonElement | null;
+    card?.click();
+
+    expect(selectedSpy).toHaveBeenCalledWith(CHANNEL);
+  });
+
+  it('emits favoriteToggled without triggering channelSelected', () => {
     const component = fixture.componentInstance;
     const selectedSpy = vi.fn();
     const favoriteSpy = vi.fn();
@@ -36,12 +50,11 @@ describe('ChannelCardComponent', () => {
     fixture.componentRef.setInput('isFavorite', false);
     fixture.detectChanges();
 
-    const favoriteButton = (fixture.nativeElement as HTMLElement).querySelector(
-      '.favorite-button',
+    const faveBtn = (fixture.nativeElement as HTMLElement).querySelector(
+      '.fave-btn',
     ) as HTMLButtonElement | null;
-    favoriteButton?.click();
+    faveBtn?.click();
 
-    expect(favoriteButton?.getAttribute('aria-label')).toBe('Add CazéTV Futebol to favorites');
     expect(favoriteSpy).toHaveBeenCalledWith(CHANNEL);
     expect(selectedSpy).not.toHaveBeenCalled();
   });

@@ -25,29 +25,23 @@ export class ChannelsPage {
   protected readonly selectedChannel = signal<Channel | null>(null);
   protected readonly isLoading = signal(true);
   protected readonly error = signal<string | null>(null);
-  protected readonly workingCount = signal(0);
-  protected readonly nonWorkingCount = signal(0);
   protected readonly filters = signal<ChannelFilters>({
     searchTerm: '',
-    groupTitle: 'all',
     playlistId: 'all',
     favoritesOnly: false,
     showNonWorking: false,
   });
   protected readonly favoriteIds = this.favoriteChannels.favoriteIds;
 
-  protected readonly groups = computed(() =>
-    [...new Set(this.channels().map((channel) => channel.groupTitle))].sort((left, right) =>
-      left.localeCompare(right),
-    ),
-  );
+  /** True while the player overlay is open. */
+  protected readonly playerOpen = computed(() => this.selectedChannel() !== null);
 
   protected readonly filteredChannels = computed(() => {
     const filters = this.filters();
     const searchTerm = filters.searchTerm.trim().toLowerCase();
 
     return this.channels().filter((channel) => {
-      // Working status filter: hide non-working unless showNonWorking is on
+      // Working status filter
       if (!channel.working && !filters.showNonWorking) {
         return false;
       }
@@ -55,14 +49,12 @@ export class ChannelsPage {
       const matchesText =
         searchTerm.length === 0 ||
         channel.name.toLowerCase().includes(searchTerm) ||
-        channel.groupTitle.toLowerCase().includes(searchTerm) ||
         channel.sourcePlaylistName.toLowerCase().includes(searchTerm);
-      const matchesGroup = filters.groupTitle === 'all' || channel.groupTitle === filters.groupTitle;
       const matchesPlaylist =
         filters.playlistId === 'all' || channel.sourcePlaylistId === filters.playlistId;
       const matchesFavorite = !filters.favoritesOnly || this.favoriteChannels.isFavorite(channel.id);
 
-      return matchesText && matchesGroup && matchesPlaylist && matchesFavorite;
+      return matchesText && matchesPlaylist && matchesFavorite;
     });
   });
 
@@ -71,7 +63,6 @@ export class ChannelsPage {
     totalPlaylists: this.playlists().length,
     visibleChannels: this.filteredChannels().length,
     favoriteChannels: this.favoriteIds().length,
-    groups: this.groups(),
   }));
 
   constructor() {
@@ -87,22 +78,13 @@ export class ChannelsPage {
       .pipe(take(1))
       .subscribe({
         next: ({ channels }) => {
-          const working = channels.filter((ch) => ch.working);
-          const nonWorking = channels.filter((ch) => !ch.working);
-
-          this.workingCount.set(working.length);
-          this.nonWorkingCount.set(nonWorking.length);
           this.channels.set(channels);
           this.playlists.set(this.extractPlaylists(channels));
-
-          if (channels.length > 0) {
-            this.selectedChannel.set(channels[0]);
-          }
           this.isLoading.set(false);
         },
         error: () => {
           this.error.set(
-            'Could not load channels. Run "futebol channels sync-from-m3u" then restart the frontend.',
+            'Could not load channels. Run "futebol load-servers" then restart the frontend.',
           );
           this.isLoading.set(false);
         },
@@ -111,16 +93,14 @@ export class ChannelsPage {
 
   protected updateFilters(filters: ChannelFilters): void {
     this.filters.set(filters);
-    const visibleChannels = this.filteredChannels();
-    const selected = this.selectedChannel();
-
-    if (visibleChannels.length > 0 && !visibleChannels.some((channel) => channel.id === selected?.id)) {
-      this.selectedChannel.set(visibleChannels[0]);
-    }
   }
 
-  protected selectChannel(channel: Channel): void {
+  protected openPlayer(channel: Channel): void {
     this.selectedChannel.set(channel);
+  }
+
+  protected closePlayer(): void {
+    this.selectedChannel.set(null);
   }
 
   protected toggleFavorite(channel: Channel): void {

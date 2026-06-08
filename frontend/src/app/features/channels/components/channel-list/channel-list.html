@@ -1,23 +1,15 @@
-<section class="channel-list-panel" aria-label="Channels">
-  <div class="list-header">
-    <h2>Channels</h2>
-    <span>{{ channels().length }} visible</span>
-  </div>
-
-  <div class="channel-scroll">
-    @for (channel of channels(); track channel.id) {
-      <app-channel-card
-        [channel]="channel"
-        [isFavorite]="isFavorite(channel)"
-        [isSelected]="channel.id === selectedChannelId()"
-        (channelSelected)="channelSelected.emit($event)"
-        (favoriteToggled)="favoriteToggled.emit($event)"
-      />
-    } @empty {
-      <article class="empty-list">
-        <h3>No matches</h3>
-        <p>Try another search, group, or playlist.</p>
-      </article>
-    }
-  </div>
-</section>
+<div class="channel-grid">
+  @for (channel of channels(); track channel.id) {
+    <app-channel-card
+      [channel]="channel"
+      [isFavorite]="isFavorite(channel)"
+      (channelSelected)="channelSelected.emit($event)"
+      (favoriteToggled)="favoriteToggled.emit($event)"
+    />
+  } @empty {
+    <div class="empty-state">
+      <span class="empty-icon">∅</span>
+      <p>no channels match</p>
+    </div>
+  }
+</div>

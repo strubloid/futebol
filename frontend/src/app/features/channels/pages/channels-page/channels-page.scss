@@ -1,155 +1,195 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.channels-shell {
-  width: min(1180px, calc(100% - 32px));
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 28px 0 40px;
+  padding: 14px 20px 40px;
 }
 
-.hero-panel,
-.state-panel,
-.content-grid,
-app-channel-filters {
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.26);
+/* ════════════════════════════════════════════════════════════
+   TERMINAL HEADER
+   ════════════════════════════════════════════════════════════ */
+.terminal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+  font-size: 0.82rem;
 }
 
-.hero-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 24px;
-  align-items: end;
-  padding: 28px;
-  border-radius: 28px;
-  background:
-    radial-gradient(circle at top left, rgba(34, 211, 238, 0.22), transparent 34%),
-    linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(30, 41, 59, 0.72));
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
-.hero-copy h1 {
-  max-width: 760px;
-  margin: 0;
-  font-size: clamp(2rem, 5vw, 4.2rem);
-  line-height: 0.96;
-  letter-spacing: -0.06em;
+.hostname {
+  color: var(--green-primary);
+  font-weight: 700;
+  text-shadow: 0 0 6px var(--green-glow);
 }
 
-.hero-copy p:not(.eyebrow) {
-  max-width: 680px;
-  margin: 18px 0 0;
-  color: #aab9cf;
-  font-size: 1.02rem;
-  line-height: 1.7;
+.separator {
+  color: var(--text-muted);
+  margin: 0 2px;
 }
 
-.eyebrow {
-  margin: 0 0 12px;
-  color: #22d3ee;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+.path {
+  color: var(--text-dim);
+}
+
+.blink {
+  color: var(--green-primary);
+  animation: cursor-blink 1s step-end infinite;
+  font-weight: 700;
+}
+
+@keyframes cursor-blink {
+  50% { opacity: 0; }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.stat {
+  font-size: 0.72rem;
+  color: var(--text-dim);
   text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(76px, 1fr));
+.stat-num {
+  color: var(--green-primary);
+  font-weight: 700;
+}
+
+.stat-divider {
+  color: var(--text-muted);
+}
+
+/* ════════════════════════════════════════════════════════════
+   STATE PANELS (loading / error / empty)
+   ════════════════════════════════════════════════════════════ */
+.state-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 240px;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.state-panel.error {
+  border-color: rgba(255, 80, 80, 0.25);
+  color: #ff6666;
+}
+
+.state-icon {
+  font-size: 1.8rem;
+  color: var(--text-muted);
+}
+
+.state-panel code {
+  color: var(--green-primary);
+}
+
+.retry-btn {
+  margin-top: 6px;
+  padding: 6px 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--green-primary);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+
+  &:hover {
+    border-color: var(--green-primary);
+    box-shadow: 0 0 10px var(--green-glow);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   GRID SECTION
+   ════════════════════════════════════════════════════════════ */
+.grid-section {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.stats-grid article {
-  padding: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 18px;
-  background: rgba(15, 23, 42, 0.68);
+.grid-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
 }
 
-.stats-grid span {
-  display: block;
-  color: #f8fafc;
-  font-size: 1.7rem;
-  font-weight: 900;
+.prompt {
+  color: var(--green-primary);
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 
-.stats-grid p {
-  margin: 2px 0 0;
-  color: #8ea0b8;
-  font-size: 0.78rem;
+.grid-title {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.85rem;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
-.state-panel {
-  margin-top: 18px;
-  padding: 24px;
-  border-radius: 22px;
-  background: rgba(15, 23, 42, 0.8);
+.grid-count {
+  color: var(--text-dim);
+  font-size: 0.78rem;
 }
 
-.state-panel h2 {
-  margin: 0 0 8px;
-}
-
-.state-panel p {
-  margin: 0;
-  color: #aab9cf;
-}
-
-.error-panel {
-  border-color: rgba(248, 113, 113, 0.34);
-}
-
-.error-panel button {
-  margin-top: 16px;
-  padding: 10px 14px;
-  border: 0;
-  border-radius: 999px;
-  background: #22d3ee;
-  color: #06111f;
-  font-weight: 800;
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: minmax(310px, 0.78fr) minmax(0, 1.22fr);
-  gap: 18px;
-  margin-top: 18px;
-  padding: 18px;
-  border-radius: 28px;
-  background: rgba(15, 23, 42, 0.6);
-}
-
-app-channel-filters {
-  display: block;
-  margin-top: 18px;
-  border-radius: 24px;
-  background: rgba(15, 23, 42, 0.72);
-}
-
-@media (max-width: 860px) {
-  .channels-shell {
-    width: min(100% - 20px, 1180px);
-    padding-top: 10px;
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .shell {
+    padding: 10px 12px 30px;
+    gap: 10px;
   }
 
-  .hero-panel,
-  .content-grid {
-    grid-template-columns: 1fr;
+  .terminal-header {
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    padding: 8px 10px;
   }
 
-  .hero-panel {
-    padding: 20px;
-    border-radius: 22px;
+  .header-right .stat-divider {
+    display: none;
   }
 
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 520px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .state-panel {
+    min-height: 160px;
   }
 }

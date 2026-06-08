@@ -1,29 +1,30 @@
-<article class="channel-card" [class.selected]="isSelected()" [class.favorite]="isFavorite()">
-  <button type="button" class="channel-main" (click)="channelSelected.emit(channel())">
-    <span class="logo-frame">
-      @if (channel().logoUrl) {
-        <img [src]="channel().logoUrl" [alt]="channel().name + ' logo'" loading="lazy" />
-      } @else {
-        <span>{{ channel().name.slice(0, 2).toUpperCase() }}</span>
-      }
-    </span>
+<button
+  type="button"
+  class="channel-card"
+  [class.favorite]="isFavorite()"
+  (click)="channelSelected.emit(channel())"
+>
+  <div class="card-poster">
+    @if (channel().logoUrl) {
+      <img [src]="channel().logoUrl" [alt]="channel().name" loading="lazy" />
+    } @else {
+      <span class="fallback-icon">{{ channel().name.slice(0, 2).toUpperCase() }}</span>
+    }
+    <div class="card-overlay">
+      <span class="play-indicator">▶</span>
+    </div>
+  </div>
 
-    <span class="channel-copy">
-      <strong>{{ channel().name }}</strong>
-      <small>{{ channel().groupTitle }} · {{ channel().sourcePlaylistName }}</small>
-    </span>
-  </button>
+  <div class="card-info">
+    <strong class="card-name">{{ channel().name }}</strong>
+    <span class="card-meta">{{ channel().sourcePlaylistName }}</span>
+  </div>
 
   <button
     type="button"
-    class="favorite-button"
+    class="fave-btn"
     [class.active]="isFavorite()"
-    [attr.aria-pressed]="isFavorite()"
-    [attr.aria-label]="
-      isFavorite() ? 'Remove ' + channel().name + ' from favorites' : 'Add ' + channel().name + ' to favorites'
-    "
-    (click)="favoriteToggled.emit(channel())"
-  >
-    ♥
-  </button>
-</article>
+    (click)="$event.stopPropagation(); favoriteToggled.emit(channel())"
+    [attr.aria-label]="isFavorite() ? 'Unfavorite' : 'Favorite'"
+  >♥</button>
+</button>

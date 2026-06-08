@@ -1,52 +1,39 @@
-<section class="filters-panel" aria-label="Channel filters">
+<section class="filters-bar" aria-label="Channel filters">
   <label class="search-field">
-    <span>Search channels</span>
+    <span class="prompt">$</span>
     <input
       type="search"
-      placeholder="Search by channel, group, or playlist..."
+      placeholder="grep channels..."
       [ngModel]="filters().searchTerm"
       (ngModelChange)="updateSearchTerm($event)"
     />
   </label>
 
-  <label>
-    <span>Group</span>
-    <select [ngModel]="filters().groupTitle" (ngModelChange)="updateGroup($event)">
-      <option value="all">All groups</option>
-      @for (group of groups(); track group) {
-        <option [value]="group">{{ group }}</option>
-      }
-    </select>
-  </label>
-
-  <label>
-    <span>Playlist</span>
+  <label class="filter-item">
+    <span class="filter-label">playlist</span>
     <select [ngModel]="filters().playlistId" (ngModelChange)="updatePlaylist($event)">
-      <option value="all">All playlists</option>
+      <option value="all">*</option>
       @for (playlist of playlists(); track playlist.id) {
         <option [value]="playlist.id">{{ playlist.name }}</option>
       }
     </select>
   </label>
 
-  <label class="nonworking-toggle">
-    <input
-      type="checkbox"
-      [ngModel]="filters().showNonWorking"
-      (ngModelChange)="updateShowNonWorking($event)"
-    />
-    <span>Show broken</span>
-  </label>
-
-  <label class="favorites-toggle">
+  <label class="filter-item checkbox">
     <input
       type="checkbox"
       [ngModel]="filters().favoritesOnly"
       (ngModelChange)="updateFavoritesOnly($event)"
     />
-    <span class="heart" aria-hidden="true">♥</span>
-    <span>Favorites only</span>
+    <span class="check-label">♥ faves</span>
   </label>
 
-  
+  <label class="filter-item checkbox">
+    <input
+      type="checkbox"
+      [ngModel]="filters().showNonWorking"
+      (ngModelChange)="updateShowNonWorking($event)"
+    />
+    <span class="check-label">✗ broken</span>
+  </label>
 </section>
