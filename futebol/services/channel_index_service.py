@@ -1,15 +1,17 @@
-"""Service that reads M3U files and generates a curated channels/ index.
+"""Service that reads M3U files and manages the single channels/ index.
 
-No longer writes individual per-channel JSON files — only a single aggregate
-``channels/index.json`` and a ``channels/manifest.json`` summary.
-Stream testing is always performed during a sync so the ``working`` flag
-reflects real reachability.
+All three public operations (load_servers, update_channels, restore_channels)
+work directly on ``channels/index.json`` — the single source of truth for
+both the backend and the Angular frontend.
+
+No per-channel files, no bridge service — the list IS the source of truth.
 """
 
 from __future__ import annotations
 
 import json
 import re
+import shutil
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -24,7 +26,7 @@ from futebol.services.playlist_parser_service import PlaylistParserService
 
 @dataclass
 class ChannelIndexEntry:
-    """One channel entry for the aggregate index."""
+    """One channel entry in the aggregate index."""
 
     tvg_id: str
     name: str
@@ -64,12 +66,35 @@ class ChannelIndexEntry:
         )
 
 
-class ChannelIndexService:
-    """Reads M3U files and builds/updates the channels/ index.
+@dataclass
+class LoadServersResult:
+    """Result of a load_servers() run."""
 
-    The output is a single ``channels/index.json`` file (the aggregate) and
-    ``channels/manifest.json`` (summary stats).  No per-channel files are
-    written.
+    total: int
+    working: int
+    new_working: int
+    updated_urls: int
+    backup_path: str | None = None
+
+
+@dataclass
+class UpdateChannelsResult:
+    """Result of an update_channels() run."""
+
+    before: int
+    after: int
+    removed: int
+    backup_path: str | None = None
+
+
+class ChannelIndexService:
+    """Reads M3U files and manages ``channels/index.json``.
+
+    Three public entry points:
+
+    * ``load_servers`` — parse M3U sources, test streams, merge into index
+    * ``update_channels`` — re-test every channel, keep only working ones
+    * ``restore_channels`` — restore index from ``channels/backup.json``
     """
 
     _extinf_pattern = re.compile(r'([\w-]+)="([^"]*)"')
@@ -78,38 +103,53 @@ class ChannelIndexService:
         self.m3u_dir = m3u_dir
         self.channels_dir = channels_dir
         self._parser = PlaylistParserService()
+        # Paths
+        self._index_path = channels_dir / "index.json"
+        self._manifest_path = channels_dir / "manifest.json"
+        self._backup_path = channels_dir / "backup.json"
+        self._frontend_dir = (
+            channels_dir.parent / "frontend" / "public" / "channels"
+        )
 
     # ------------------------------------------------------------------
-    # Public commands
+    # 1. Load Servers
     # ------------------------------------------------------------------
 
-    def load_and_test(
+    def load_servers(
         self,
         concurrency: int = 20,
         timeout: float = 8.0,
-    ) -> tuple[int, int]:
-        """Read all M3U files, parse channels, and test every stream.
+    ) -> LoadServersResult:
+        """Parse all M3U files in ``m3u/`` and merge into the channel index.
 
-        Each channel's stream URL is probed with a HEAD request (falling
-        back to a partial GET for servers that reject HEAD).  Working
-        streams are marked ``working=True``; unresponsive ones are
-        marked ``working=False``.
+        * **New channels** — stream is tested; only added if working.
+        * **Existing channels, same URL** — kept untouched (preserves order).
+        * **Existing channels, different URL** — new URL is tested; updated
+          only if the new stream is reachable, otherwise old entry stays.
+        * Working new channels are **appended** to the end of the list.
 
-        This is the **only** sync method — stream testing is mandatory.
-        There is no "preserve previous flags" path; every load is a fresh
-        assessment.
+        Existing ``index.json`` is backed up to ``backup.json`` before
+        overwriting.
 
         Returns:
-            ``(total_entries, working_entries)``
+            A :class:`LoadServersResult` with counts.
         """
-        m3u_files = sorted(self.m3u_dir.glob("*.m3u")) + sorted(self.m3u_dir.glob("*.m3u8"))
+        # 1. Read existing index
+        existing: dict[str, ChannelIndexEntry] = {}
+        existing_order: list[str] = []  # preserves insertion order
+        for entry in self._load_all_entries():
+            existing[entry.tvg_id] = entry
+            existing_order.append(entry.tvg_id)
+
+        # 2. Parse all M3U sources
+        m3u_files = sorted(self.m3u_dir.glob("*.m3u")) + sorted(
+            self.m3u_dir.glob("*.m3u8")
+        )
         if not m3u_files:
             print("No M3U files found in", self.m3u_dir)
-            return 0, 0
+            return LoadServersResult(total=0, working=0, new_working=0, updated_urls=0)
 
-        self.channels_dir.mkdir(parents=True, exist_ok=True)
-
-        raw_entries: list[ChannelIndexEntry] = []
+        parsed: list[ChannelIndexEntry] = []
         seen_tvg_ids: set[str] = set()
 
         for m3u_path in m3u_files:
@@ -122,60 +162,193 @@ class ChannelIndexService:
             content = m3u_path.read_text(encoding="utf-8", errors="replace")
             entries = self._parse_file(content, playlist_name, playlist_id)
             for entry in entries:
-                tvg_key = entry.tvg_id
-                if tvg_key in seen_tvg_ids:
-                    continue  # first occurrence wins
-                seen_tvg_ids.add(tvg_key)
-                raw_entries.append(entry)
+                if entry.tvg_id not in seen_tvg_ids:
+                    seen_tvg_ids.add(entry.tvg_id)
+                    parsed.append(entry)
 
-        # ---------- test streams in parallel ----------
-        total = len(raw_entries)
-        tested_entries: list[ChannelIndexEntry] = list(raw_entries)
-        tested = 0
-        ok = 0
+        # 3. Decide what to test and what to keep
+        test_jobs: list[tuple[int, ChannelIndexEntry, str | None]] = []
+        # (index_in_parsed, entry, old_url_or_None_if_new)
 
+        kept_entries: list[ChannelIndexEntry] = []
+
+        for i, pe in enumerate(parsed):
+            existing_entry = existing.get(pe.tvg_id)
+
+            if existing_entry is None:
+                # NEW channel — test stream, only add if working
+                test_jobs.append((i, pe, None))
+            elif existing_entry.stream_url == pe.stream_url:
+                # Same URL — keep existing as-is (preserve order & status)
+                # Don't re-test, don't change anything
+                kept_entries.append(existing_entry)
+            else:
+                # URL changed — test new URL first
+                test_jobs.append((i, pe, existing_entry.stream_url))
+
+        # 4. Test streams in parallel
+        new_working_count = 0
+        updated_url_count = 0
+        tested_results: dict[int, ChannelIndexEntry] = {}
+        job_details: dict[int, str | None] = {}  # idx → old_url (None = new)
+
+        with ThreadPoolExecutor(max_workers=concurrency) as executor:
+
+            def test_and_return(idx: int, entry: ChannelIndexEntry, old_url: str | None) -> tuple[int, ChannelIndexEntry, bool]:
+                """Test stream, return (idx, entry_or_fallback, changed)."""
+                is_alive = self._test_stream_url(entry.stream_url, timeout)
+                if is_alive:
+                    return idx, entry, True
+                # Stream failed — if this was a URL update, keep the old entry
+                if old_url is not None:
+                    old_entry = existing.get(entry.tvg_id)
+                    if old_entry is not None:
+                        return idx, old_entry, False
+                # Stream failed and it's a new channel — don't add
+                entry.working = False
+                return idx, entry, False
+
+            future_map = {}
+            for j_idx, (parsed_idx, entry, old_url) in enumerate(test_jobs):
+                future_map[executor.submit(test_and_return, parsed_idx, entry, old_url)] = parsed_idx
+                job_details[parsed_idx] = old_url
+
+            for future in as_completed(future_map):
+                parsed_idx, result_entry, was_live = future.result()
+                tested_results[parsed_idx] = result_entry
+                if was_live:
+                    old_url = job_details.get(parsed_idx)
+                    if old_url is None:
+                        new_working_count += 1
+                    else:
+                        updated_url_count += 1
+
+        # 5. Build final list: existing order + new working channels appended
+        final_entries: list[ChannelIndexEntry] = []
+
+        # Preserve existing order first
+        for tvg_id in existing_order:
+            if tvg_id in existing:
+                entry = existing[tvg_id]
+                # Check if this entry was in the test results (URL changed)
+                parsed_idx = next(
+                    (i for i, pe in enumerate(parsed) if pe.tvg_id == tvg_id),
+                    None,
+                )
+                if parsed_idx is not None and parsed_idx in tested_results:
+                    final_entries.append(tested_results[parsed_idx])
+                else:
+                    final_entries.append(entry)
+
+        # Append new working channels at the end
+        for idx, entry, old_url in test_jobs:
+            if old_url is None:  # was new
+                result_entry = tested_results.get(idx)
+                if result_entry is not None and result_entry.working:
+                    final_entries.append(result_entry)
+
+        # 6. Backup existing index before overwriting
+        backup_path = self._backup_current_index()
+
+        # 7. Write
+        total = len(final_entries)
+        working_count = sum(1 for e in final_entries if e.working)
+        self._write_index(final_entries)
+
+        return LoadServersResult(
+            total=total,
+            working=working_count,
+            new_working=new_working_count,
+            updated_urls=updated_url_count,
+            backup_path=str(backup_path) if backup_path else None,
+        )
+
+    # ------------------------------------------------------------------
+    # 2. Update Channels — re-test all, keep only working
+    # ------------------------------------------------------------------
+
+    def update_channels(
+        self,
+        concurrency: int = 20,
+        timeout: float = 8.0,
+    ) -> UpdateChannelsResult:
+        """Re-test every channel's stream; remove non-working ones.
+
+        The index is backed up to ``channels/backup.json`` before
+        overwriting.
+        """
+        all_entries = self._load_all_entries()
+        before = len(all_entries)
+
+        if before == 0:
+            return UpdateChannelsResult(before=0, after=0, removed=0)
+
+        # Test all streams in parallel
         with ThreadPoolExecutor(max_workers=concurrency) as executor:
             future_map = {
                 executor.submit(self._test_stream_url, e.stream_url, timeout): i
-                for i, e in enumerate(tested_entries)
+                for i, e in enumerate(all_entries)
             }
             for future in as_completed(future_map):
                 idx = future_map[future]
-                tested += 1
                 try:
-                    is_alive = future.result()
+                    all_entries[idx].working = future.result()
                 except Exception:
-                    is_alive = False
-                tested_entries[idx].working = is_alive
-                if is_alive:
-                    ok += 1
+                    all_entries[idx].working = False
 
-        self._write_index(tested_entries)
-        return total, ok
+        # Keep only working channels
+        working = [e for e in all_entries if e.working]
+        after = len(working)
+        removed = before - after
 
-    def set_working(self, tvg_id: str, working: bool) -> bool:
-        """Toggle the working flag for a channel in the aggregate index.
+        # Backup before overwriting
+        backup_path = self._backup_current_index()
 
-        Returns True if the channel was found and updated.
+        self._write_index(working)
+
+        return UpdateChannelsResult(
+            before=before,
+            after=after,
+            removed=removed,
+            backup_path=str(backup_path) if backup_path else None,
+        )
+
+    # ------------------------------------------------------------------
+    # 3. Restore Channels — from backup
+    # ------------------------------------------------------------------
+
+    def restore_channels(self) -> int:
+        """Restore ``channels/index.json`` from ``channels/backup.json``.
+
+        Returns the number of channels restored, or 0 if no backup exists.
         """
-        entries = self._load_all_entries()
-        found = False
-        for entry in entries:
-            if entry.tvg_id == tvg_id:
-                entry.working = working
-                found = True
-                break
-        if not found:
-            return False
+        if not self._backup_path.exists():
+            return 0
+
+        try:
+            data = json.loads(self._backup_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return 0
+
+        if "channels" in data:
+            entries = [ChannelIndexEntry.from_dict(ch) for ch in data["channels"]]
+        else:
+            return 0
+
         self._write_index(entries)
-        return True
+        self._sync_to_frontend()
+        return len(entries)
+
+    # ------------------------------------------------------------------
+    # Query helpers
+    # ------------------------------------------------------------------
 
     def list_working(self) -> list[ChannelIndexEntry]:
-        """List all entries marked as working."""
+        """List only working channels."""
         return [e for e in self._load_all_entries() if e.working]
 
     def list_all(self) -> list[ChannelIndexEntry]:
-        """List all entries including non-working."""
+        """List all channels including non-working."""
         return self._load_all_entries()
 
     # ------------------------------------------------------------------
@@ -267,55 +440,67 @@ class ChannelIndexService:
             return url
 
     def _write_index(self, entries: list[ChannelIndexEntry]) -> None:
-        """Write the aggregate ``index.json`` and ``manifest.json``.
+        """Write ``index.json`` + ``manifest.json``, then sync to frontend."""
+        self.channels_dir.mkdir(parents=True, exist_ok=True)
+        self._frontend_dir.mkdir(parents=True, exist_ok=True)
 
-        No individual per-channel files are written.
+        # index.json
+        index_data = {
+            "generatedAt": datetime.now(timezone.utc).isoformat(),
+            "channels": [e.to_dict() for e in entries],
+        }
+        self._index_path.write_text(
+            json.dumps(index_data, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        # manifest.json
+        manifest_data = {
+            "generatedAt": datetime.now(timezone.utc).isoformat(),
+            "totalChannels": len(entries),
+            "workingChannels": sum(1 for e in entries if e.working),
+            "playlists": list(
+                {
+                    e.source_playlist_id: {
+                        "id": e.source_playlist_id,
+                        "name": e.source_playlist,
+                    }
+                    for e in entries
+                }.values()
+            ),
+        }
+        self._manifest_path.write_text(
+            json.dumps(manifest_data, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        # Sync to frontend
+        self._sync_to_frontend()
+
+    def _sync_to_frontend(self) -> None:
+        """Copy index + manifest to frontend/public/channels/."""
+        for filename in ("index.json", "manifest.json"):
+            source = self.channels_dir / filename
+            if source.exists():
+                target = self._frontend_dir / filename
+                target.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+
+    def _backup_current_index(self) -> Path | None:
+        """Copy current index.json → backup.json.
+
+        Returns the backup path, or None if nothing to back up.
         """
-        # 1. Write aggregate index.json for the frontend
-        index_path = self.channels_dir / "index.json"
-        index_path.write_text(
-            json.dumps(
-                {
-                    "generatedAt": datetime.now(timezone.utc).isoformat(),
-                    "channels": [e.to_dict() for e in entries],
-                },
-                indent=2,
-                ensure_ascii=False,
-            ),
-            encoding="utf-8",
-        )
-
-        # 2. Write manifest.json with summary
-        manifest_path = self.channels_dir / "manifest.json"
-        manifest_path.write_text(
-            json.dumps(
-                {
-                    "generatedAt": datetime.now(timezone.utc).isoformat(),
-                    "totalChannels": len(entries),
-                    "workingChannels": sum(1 for e in entries if e.working),
-                    "playlists": list(
-                        {
-                            e.source_playlist_id: {
-                                "id": e.source_playlist_id,
-                                "name": e.source_playlist,
-                            }
-                            for e in entries
-                        }.values()
-                    ),
-                },
-                indent=2,
-                ensure_ascii=False,
-            ),
-            encoding="utf-8",
-        )
+        if not self._index_path.exists():
+            return None
+        shutil.copy2(self._index_path, self._backup_path)
+        return self._backup_path
 
     def _load_all_entries(self) -> list[ChannelIndexEntry]:
         """Load all entries from the aggregate index.json."""
-        index_path = self.channels_dir / "index.json"
-        if not index_path.exists():
+        if not self._index_path.exists():
             return []
         try:
-            data = json.loads(index_path.read_text(encoding="utf-8"))
+            data = json.loads(self._index_path.read_text(encoding="utf-8"))
             return [ChannelIndexEntry.from_dict(ch) for ch in data.get("channels", [])]
         except (OSError, json.JSONDecodeError, KeyError):
             return []

@@ -107,8 +107,7 @@ pip install -e .
 Copy `.env.example` if desired or set environment variables directly:
 
 ```bash
-FUTEBOL_DATA_DIR=.futebol
-FUTEBOL_STREAM_TIMEOUT_SECONDS=8
+FUTEBOL_STREAM_TIMEOUT_SECONDS=8.0
 FUTEBOL_ALLOW_UNKNOWN_SOURCES=false
 ```
 

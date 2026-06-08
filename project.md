@@ -248,18 +248,21 @@ Export and reporting:
 
 ## Data and persistence
 
-By default, runtime data is stored in:
+By default, data is stored in:
 
 ```text
-.futebol/
-  sources.json
-  channels.json
+channels/
+  index.json      # single source of truth — both backend & frontend
+  backup.json     # auto-created before destructive operations
+  manifest.json   # metadata for the frontend
+m3u/
+  *.m3u           # playlist sources (edit these to add channels)
 ```
 
 Configure with:
 
 ```bash
-FUTEBOL_DATA_DIR=.futebol
+FUTEBOL_STREAM_TIMEOUT_SECONDS=8.0
 ```
 
 ## Configuration
@@ -267,7 +270,7 @@ FUTEBOL_DATA_DIR=.futebol
 Environment variables:
 
 ```bash
-FUTEBOL_DATA_DIR=.futebol
+FUTEBOL_STREAM_TIMEOUT_SECONDS=8.0
 FUTEBOL_STREAM_TIMEOUT_SECONDS=8
 FUTEBOL_ALLOW_UNKNOWN_SOURCES=false
 ```
