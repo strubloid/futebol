@@ -82,8 +82,14 @@ class IptvOrgAdapter:
 
     def fetch_channels(self) -> list[dict]:
         if self._channels_cache is None:
-            resp = self._http.get_text(IPTV_ORG_CHANNELS_URL)
-            self._channels_cache = json.loads(resp.text)
+            try:
+                resp = self._http.get_text(IPTV_ORG_CHANNELS_URL)
+                if resp.status_code == 200:
+                    self._channels_cache = json.loads(resp.text)
+                else:
+                    self._channels_cache = []
+            except Exception:
+                self._channels_cache = []
         return self._channels_cache
 
     def fetch_guide(self, xmltv_id: str) -> dict | None:
@@ -392,12 +398,12 @@ class SeedGenerator:
     is available.  Each channel category (globo, sport, news, movie, etc.)
     gets a curated lineup so the guide always shows something useful."""
 
-    # ── Channel-category template schedules ──────────────────────────────
+# ── Channel-category template schedules ──────────────────────────────
     # Each entry: (hour, minute, title, description, category)
     # Times are in 24h local (will be shifted to today's date).
 
-    # Open TV — general entertainment
-    GENERAL: list[tuple[int, int, str, str, str]] = [
+    # Globo-specific — these shows belong ONLY on Globo/RedeGlobo
+    GLOBO: list[tuple[int, int, str, str, str]] = [
         (5, 30, "Bom Dia Brasil", "Notícias e informações do Brasil e do mundo", "news"),
         (7, 0, "Encontro com Patrícia Poeta", "Entretenimento e variedades", "talk"),
         (9, 0, "Mais Você", "Culinária, entretenimento e prestação de serviços", "talk"),
@@ -414,6 +420,27 @@ class SeedGenerator:
         (0, 0, "Programa do Jô", "Entrevistas e humor", "talk"),
         (1, 30, "Corujão", "Filme da madrugada", "movie"),
         (3, 30, "Madrugada Globo", "Séries e reprises", "entertainment"),
+    ]
+
+    # Generic general entertainment — for any channel without a specific category
+    GENERAL: list[tuple[int, int, str, str, str]] = [
+        (6, 0, "Programa da Manhã", "Programa matinal de variedades", "entertainment"),
+        (8, 0, "Série da Manhã", "Série nacional", "entertainment"),
+        (9, 30, "Revista Eletrônica", "Variedades e entrevistas", "talk"),
+        (11, 0, "Jornal Local", "Notícias da região", "news"),
+        (12, 0, "Sessão do Meio-Dia", "Série ou filme", "entertainment"),
+        (13, 30, "Novela da Tarde", "Capítulo da novela", "soap"),
+        (15, 0, "Tarde de Cinema", "Filme nacional", "movie"),
+        (16, 45, "Vídeos Musicais", "Clipes nacionais e internacionais", "music"),
+        (17, 30, "Programa de Auditório", "Entretenimento ao vivo", "entertainment"),
+        (18, 30, "Jornal da Tarde", "Noticiário local e nacional", "news"),
+        (19, 15, "Novela do Horário Nobre", "Capítulo da novela principal", "soap"),
+        (20, 30, "Série Nacional", "Produção nacional", "entertainment"),
+        (21, 30, "Programa de Entrevistas", "Entrevistas e debate", "talk"),
+        (22, 30, "Jornal da Noite", "Notícias nacionais e internacionais", "news"),
+        (23, 30, "Sessão de Filmes", "Filme da madrugada", "movie"),
+        (1, 0, "Programa Musical", "Música e entretenimento", "music"),
+        (3, 0, "Reapresentação", "Melhores momentos da programação", "entertainment"),
     ]
 
     NEWS: list[tuple[int, int, str, str, str]] = [
@@ -502,24 +529,25 @@ class SeedGenerator:
     # ── Category detection ───────────────────────────────────────────────
 
     _CATEGORY_RULES: list[tuple[list[str], list[tuple[int, int, str, str, str]]]] = [
-        (["globo", "open", "tv aberta"], GENERAL),
-        (["record", "recordtv"], GENERAL),
-        (["sbt", "sbt"], GENERAL),
-        (["band", "band"], GENERAL),
-        (["cultura", "tvcultura"], GENERAL),
-        (["brasil", "tvbrasil", "tve Brasil"], GENERAL),
+        # Specific channels first (checked before general fallbacks)
+        (["globo", "redeglobo"], GLOBO),
         (["sport", "spor", "espn", "fox sport", "premiere", "combate", "band sport",
           "futebol", "nba", "nfl", "mlb", "nhl"], SPORTS),
-        (["news", "cnn", "jornal", "globo news", "record news", "band news",
-          "bbc", "fox news", "rfi", "euronews"], NEWS),
+        (["record news", "cnn", "globo news", "band news", "bbc", "fox news",
+          "rfi", "euronews", "jornal"], NEWS),
         (["movie", "cine", "telecine", "megapix", "studio", "hbo",
           "netflix", "paramount", "star+"], MOVIE),
         (["soap", "novela", "vale a pena", "viva", "gnt", "multishow"], SOAP),
         (["cartoon", "disney", "nick", "kids", "infantil", "baby", "gospel cartoon",
-          "animal", "nature"], KIDS),
+          "animal", "nature", "gloob"], KIDS),
         (["gospel", "universal", "religi", "católic", "igreja", "cancao", "praise",
           "adoração", "louvor"], RELIGIOUS),
         (["music", "mtv", "bis", "woohoo", "clipes"], MUSIC),
+        # Open TV general entertainment (fallback for Brazilian free-to-air)
+        (["record", "recordtv", "sbt", "band", "band", "cultura", "tvcultura",
+          "tv brasil", "tvbrasil", "tve Brasil"], GENERAL),
+        # News channels that weren't caught above
+        (["news"], NEWS),
     ]
 
     @classmethod

@@ -8,14 +8,19 @@
       <span class="prompt">▶</span>
       <span class="name">{{ channel()?.name }}</span>
     </div>
-    <button type="button" class="fs-btn" (click)="toggleFullscreen()" aria-label="Toggle fullscreen">
-      {{ isFullscreen ? '⊞' : '⛶' }}
-    </button>
+    <div class="topbar-actions">
+      <button type="button" class="guide-btn" (click)="toggleGuide()" aria-label="Show programme guide">
+        {{ guideOpen() ? '✕' : '📋' }} Guia
+      </button>
+      <button type="button" class="fs-btn" (click)="toggleFullscreen()" aria-label="Toggle fullscreen">
+        {{ isFullscreen ? '⊞' : '⛶' }}
+      </button>
+    </div>
   </div>
 
   <!-- Video area -->
   <div class="player-viewport">
-    <video #videoElement muted playsinline></video>
+    <video #videoElement muted playsinline preload="auto" crossorigin="anonymous"></video>
 
     @if (!ready()) {
       <div class="loading-overlay">
@@ -24,6 +29,53 @@
       </div>
     }
   </div>
+
+  <!-- EPG Guide panel -->
+  @if (guideOpen()) {
+    <div class="player-epg">
+      <div class="epg-header">
+        <span class="epg-clock">{{ timeString() }}</span>
+        <span class="epg-title">Programação</span>
+        <span class="epg-channel-name">{{ channel()?.name }}</span>
+      </div>
+
+      <!-- Now playing -->
+      @let now = nowPlaying();
+      @if (now) {
+        <div class="epg-now">
+          <div class="now-live-dot">◉</div>
+          <div class="now-info">
+            <span class="now-title">{{ now.title }}</span>
+            <span class="now-time">{{ now.start | date:'HH:mm' }} – {{ now.stop | date:'HH:mm' }}</span>
+          </div>
+          <span class="now-duration">{{ progDuration(now) }}min</span>
+        </div>
+        <div class="epg-progress-bar">
+          <div class="epg-progress-fill" [style.width.%]="progProgress(now)"></div>
+        </div>
+      } @else {
+        <div class="epg-now epg-no-program">
+          <span>Nenhum programa disponível</span>
+        </div>
+      }
+
+      <!-- Upcoming -->
+      <div class="epg-upcoming">
+        @for (prog of upcoming(); track prog.start; let idx = $index) {
+          <div class="epg-item">
+            <span class="item-time">{{ prog.start | date:'HH:mm' }}</span>
+            <div class="item-info">
+              <span class="item-title">{{ prog.title }}</span>
+              @if (prog.description) {
+                <span class="item-desc">{{ prog.description }}</span>
+              }
+            </div>
+            <span class="item-duration">{{ progDuration(prog) }}min</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
 
   <!-- Bottom info -->
   <div class="player-bottombar">

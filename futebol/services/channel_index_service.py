@@ -16,7 +16,7 @@ import socket
 import time
 import urllib.error
 import urllib.request
-from concurrent.futures import Future, ThreadPoolExecutor, as_completed, wait
+from concurrent.futures import CancelledError, Future, ThreadPoolExecutor, as_completed, wait
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from hashlib import md5
@@ -260,7 +260,10 @@ class ChannelIndexService:
                     timeout=min(remaining_time, 2.0),
                 )
                 for future in done:
-                    parsed_idx, result_entry, was_live = future.result(timeout=0.1)
+                    try:
+                        parsed_idx, result_entry, was_live = future.result(timeout=0.1)
+                    except CancelledError:
+                        continue
                     tested_results[parsed_idx] = result_entry
                     future_map.pop(future, None)
                     if was_live:
@@ -276,8 +279,11 @@ class ChannelIndexService:
                         f.cancel()
                     cancel_done, _ = wait(not_done, timeout=0.5)
                     for future in cancel_done:
-                        parsed_idx, result_entry, was_live = future.result(timeout=0.1)
-                        tested_results[parsed_idx] = result_entry
+                        try:
+                            parsed_idx, result_entry, was_live = future.result(timeout=0.1)
+                            tested_results[parsed_idx] = result_entry
+                        except CancelledError:
+                            pass
                         future_map.pop(future, None)
                     for f in list(future_map.keys()):
                         parsed_idx = future_map[f][0]
