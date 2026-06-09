@@ -1,39 +1,113 @@
 <section class="filters-bar" aria-label="Channel filters">
+  <!-- Search -->
   <label class="search-field">
     <span class="prompt">$</span>
     <input
       type="search"
       placeholder="grep channels..."
       [ngModel]="filters().searchTerm"
-      (ngModelChange)="updateSearchTerm($event)"
+      (ngModelChange)="updateField('searchTerm', $event)"
     />
   </label>
 
-  <label class="filter-item">
-    <span class="filter-label">playlist</span>
-    <select [ngModel]="filters().playlistId" (ngModelChange)="updatePlaylist($event)">
-      <option value="all">*</option>
-      @for (playlist of playlists(); track playlist.id) {
-        <option [value]="playlist.id">{{ playlist.name }}</option>
+  <!-- Row 1: Basic filters -->
+  <div class="filter-row">
+    <label class="filter-item">
+      <span class="filter-label">playlist</span>
+      <select [ngModel]="filters().playlistId" (ngModelChange)="updateField('playlistId', $event)">
+        <option value="all">* todas</option>
+        @for (pl of playlists(); track pl.id) {
+          <option [value]="pl.id">{{ pl.name }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="filter-item checkbox">
+      <input
+        type="checkbox"
+        [ngModel]="filters().favoritesOnly"
+        (ngModelChange)="updateField('favoritesOnly', $event)"
+      />
+      <span class="check-label">♥ faves</span>
+    </label>
+
+    <label class="filter-item checkbox">
+      <input
+        type="checkbox"
+        [ngModel]="filters().showNonWorking"
+        (ngModelChange)="updateField('showNonWorking', $event)"
+      />
+      <span class="check-label">✗ broken</span>
+    </label>
+  </div>
+
+  <!-- Row 2: Organization filters (collapsible on mobile) -->
+  <details class="org-filters">
+    <summary class="org-summary">🌐 organization (l10n)</summary>
+    <div class="org-grid">
+      <!-- Language -->
+      <label class="filter-item">
+        <span class="filter-label">idioma</span>
+        <select [ngModel]="filters().language" (ngModelChange)="updateField('language', $event)">
+          <option value="all">* todos</option>
+          @for (code of options().languages; track code) {
+            <option [value]="code">
+              {{ LANGUAGE_LABELS[code] || code }} ({{ code }})
+            </option>
+          }
+        </select>
+      </label>
+
+      <!-- Country -->
+      <label class="filter-item">
+        <span class="filter-label">país</span>
+        <select [ngModel]="filters().country" (ngModelChange)="updateField('country', $event)">
+          <option value="all">* todos</option>
+          @for (code of options().countries; track code) {
+            <option [value]="code">
+              {{ COUNTRY_NAMES[code] || code }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <!-- Brazilian State -->
+      @if (options().states.length > 0) {
+        <label class="filter-item">
+          <span class="filter-label">estado (BR)</span>
+          <select [ngModel]="filters().state" (ngModelChange)="updateField('state', $event)">
+            <option value="all">* todos</option>
+            @for (code of options().states; track code) {
+              <option [value]="code">
+                {{ STATE_NAMES[code] || code }}
+              </option>
+            }
+          </select>
+        </label>
       }
-    </select>
-  </label>
 
-  <label class="filter-item checkbox">
-    <input
-      type="checkbox"
-      [ngModel]="filters().favoritesOnly"
-      (ngModelChange)="updateFavoritesOnly($event)"
-    />
-    <span class="check-label">♥ faves</span>
-  </label>
+      <!-- Access Type -->
+      <label class="filter-item">
+        <span class="filter-label">acesso</span>
+        <select [ngModel]="filters().accessType" (ngModelChange)="updateField('accessType', $event)">
+          <option value="all">* todos</option>
+          @if (options().hasFree) { <option value="free">📡 free</option> }
+          @if (options().hasPremium) { <option value="premium">🔒 premium</option> }
+        </select>
+      </label>
 
-  <label class="filter-item checkbox">
-    <input
-      type="checkbox"
-      [ngModel]="filters().showNonWorking"
-      (ngModelChange)="updateShowNonWorking($event)"
-    />
-    <span class="check-label">✗ broken</span>
-  </label>
+      <!-- Channel Type -->
+      <label class="filter-item">
+        <span class="filter-label">tipo</span>
+        <select [ngModel]="filters().channelType" (ngModelChange)="updateField('channelType', $event)">
+          <option value="all">* todos</option>
+          @for (type of options().channelTypes; track type) {
+            <option [value]="type">
+              {{ TYPE_LABELS[type] || type }}
+            </option>
+          }
+        </select>
+      </label>
+    </div>
+  </details>
 </section>

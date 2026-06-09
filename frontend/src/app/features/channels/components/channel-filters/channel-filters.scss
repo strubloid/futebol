@@ -1,8 +1,7 @@
 .filters-bar {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   padding: 12px 16px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
@@ -13,8 +12,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1 1 220px;
-  min-width: 140px;
+  flex: 1;
 }
 
 .prompt {
@@ -29,6 +27,14 @@
   border-radius: 4px;
   min-width: 0;
   font-size: 0.85rem;
+}
+
+/* Row 1: basic filters */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
 .filter-item {
@@ -64,4 +70,69 @@
 .check-label {
   color: var(--text-dim);
   font-size: 0.78rem;
+}
+
+/* ─── Organization filters (collapsible) ─── */
+.org-filters {
+  border-top: 1px solid var(--border-color);
+  padding-top: 8px;
+}
+
+.org-summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.org-summary::-webkit-details-marker {
+  display: none;
+}
+
+.org-summary::before {
+  content: '▶';
+  font-size: 0.65rem;
+  transition: transform 160ms ease;
+}
+
+details[open] .org-summary::before {
+  transform: rotate(90deg);
+}
+
+.org-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 0 4px;
+}
+
+.org-grid .filter-item select {
+  min-width: 100px;
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 640px) {
+  .filters-bar {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .org-grid {
+    flex-direction: column;
+  }
+
+  .org-grid .filter-item {
+    width: 100%;
+  }
+
+  .org-grid .filter-item select {
+    flex: 1;
+    min-width: 0;
+  }
 }

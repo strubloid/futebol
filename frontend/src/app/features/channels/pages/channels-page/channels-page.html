@@ -1,74 +1,131 @@
-<main class="shell">
-  <!-- ═══ TERMINAL HEADER ═══ -->
-  <header class="terminal-header">
-    <div class="header-left">
-      <span class="hostname">root@futebol</span>
-      <span class="separator">:</span>
-      <span class="path">~/channels</span>
-      <span class="separator">$</span>
-      <span class="blink">▌</span>
-    </div>
-    <div class="header-right">
-      @if (!isLoading() && channels().length > 0) {
-        <span class="stat">
-          <span class="stat-num">{{ stats().totalChannels }}</span> ch
-        </span>
-        <span class="stat-divider">|</span>
-        <span class="stat">
-          <span class="stat-num">{{ stats().visibleChannels }}</span> vis
-        </span>
-        <span class="stat-divider">|</span>
-        <span class="stat">
-          <span class="stat-num">{{ stats().favoriteChannels }}</span> ★
-        </span>
-      }
-    </div>
-  </header>
+<section class="channels-page" aria-label="Canais de TV">
 
-  <!-- ═══ LOADING / ERROR ═══ -->
-  @if (error()) {
-    <section class="state-panel error">
-      <span class="state-icon">!</span>
-      <p>{{ error() }}</p>
+  <!-- ════════════════════════════════════
+       LOADING SCREEN — Action 1 animation
+       ════════════════════════════════════ -->
+  @if (isLoading()) {
+    <div class="loading-screen" aria-live="polite">
+      <div class="loading-terminal">
+        <div class="loading-bar">
+          <div class="loading-bar-fill" [style.width.%]="(loadingPhase() / 4) * 100"></div>
+        </div>
+
+        <div class="loading-lines">
+          @switch (loadingPhase()) {
+            @case (0) {
+              <span class="load-line animate-pulse">$ scanning playlists...</span>
+              <span class="load-line dim">  ▸ 0 channels found</span>
+            }
+            @case (1) {
+              <span class="load-line done">✓ playlists scanned</span>
+              <span class="load-line animate-pulse">$ parsing M3U metadata...</span>
+              <span class="load-line dim">  ▸ indexing languages & countries</span>
+            }
+            @case (2) {
+              <span class="load-line done">✓ playlists scanned</span>
+              <span class="load-line done">✓ M3U metadata parsed</span>
+              <span class="load-line animate-pulse">$ building channel index...</span>
+              <span class="load-line dim">  ▸ classifying by type & access</span>
+            }
+            @case (3) {
+              <span class="load-line done">✓ playlists scanned</span>
+              <span class="load-line done">✓ M3U metadata parsed</span>
+              <span class="load-line done">✓ channel index built</span>
+              <span class="load-line animate-pulse">$ finalizing organization...</span>
+              <span class="load-line dim">  ▸ {{ stats().totalChannels || '...' }} channels loaded</span>
+            }
+            @case (4) {
+              <span class="load-line done">✓ playlists scanned</span>
+              <span class="load-line done">✓ M3U metadata parsed</span>
+              <span class="load-line done">✓ channel index built</span>
+              <span class="load-line done">✓ ready</span>
+            }
+          }
+        </div>
+
+        <div class="loading-spinner">
+          <span class="spin"></span>
+          <span class="loading-text">
+            @if (loadingPhase() < 4) {
+              loading...
+            } @else {
+              done ✦
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ════════════════════════════════════
+       ERROR STATE
+       ════════════════════════════════════ -->
+  @if (error(); as err) {
+    <div class="error-banner" role="alert">
+      <span class="error-icon">⚠</span>
+      <p class="error-message">{{ err }}</p>
       <button type="button" class="retry-btn" (click)="loadChannels()">retry</button>
-    </section>
-  } @else if (isLoading()) {
-    <section class="state-panel">
-      <span class="state-icon">~</span>
-      <p>loading index.json ...</p>
-    </section>
-  } @else if (channels().length === 0) {
-    <section class="state-panel">
-      <span class="state-icon">∅</span>
-      <p>no channels found — run <code>futebol load-servers</code></p>
-    </section>
-  } @else {
-    <!-- ═══ FILTERS ═══ -->
+    </div>
+  }
+
+  <!-- ════════════════════════════════════
+       MAIN CONTENT (loaded state)
+       ════════════════════════════════════ -->
+  @if (!isLoading() && !error()) {
+    <!-- ─── Stats Bar ─── -->
+    <header class="stats-bar">
+      <span class="stat-item">{{ stats().visibleChannels }} / {{ stats().totalChannels }} canais</span>
+      <span class="stat-sep">|</span>
+      <span class="stat-item">{{ stats().totalPlaylists }} playlists</span>
+      <span class="stat-sep">|</span>
+      <span class="stat-item">{{ stats().freeChannels }} 📡 free</span>
+      <span class="stat-item">+ {{ stats().premiumChannels }} 🔒</span>
+      <span class="stat-sep">|</span>
+      <span class="stat-item">{{ stats().languages }} idiomas</span>
+      <span class="stat-item">{{ stats().countries }} países</span>
+      @if (stats().favoriteChannels > 0) {
+        <span class="stat-sep">|</span>
+        <span class="stat-item stat-fav">♥ {{ stats().favoriteChannels }} faves</span>
+      }
+      <a routerLink="/guide" class="guide-btn" title="TV Guide">📋 ver guia</a>
+      <button type="button" class="reset-btn" (click)="resetFilters()" title="Reset filters">↺</button>
+    </header>
+
+    <!-- ─── Filters ─── -->
     <app-channel-filters
       [filters]="filters()"
-      [playlists]="playlists()"
+      [allChannels]="channels()"
+      [playlists]="playlistNames()"
       (filtersChange)="updateFilters($event)"
     />
 
-    <!-- ═══ CHANNEL GRID ═══ -->
-    <section class="grid-section">
-      <div class="grid-header">
-        <span class="prompt">⇒</span>
-        <span class="grid-title">channels</span>
-        <span class="grid-count">({{ filteredChannels().length }})</span>
-      </div>
-
-      <app-channel-list
-        [channels]="filteredChannels()"
-        [favoriteIds]="favoriteIds()"
-        (channelSelected)="openPlayer($event)"
-        (favoriteToggled)="toggleFavorite($event)"
-      />
-    </section>
+    <!-- ─── Channel Grid ─── -->
+    <app-channel-list
+      [channels]="filteredChannels()"
+      [favoriteIds]="favoriteIds()"
+      (channelSelected)="openPlayer($event)"
+      (showEpg)="openEpg($event)"
+      (favoriteToggled)="toggleFavorite($event)"
+    />
   }
-</main>
 
-<!-- ═══ PLAYER OVERLAY ═══ -->
-@if (playerOpen()) {
-  <app-channel-player [channel]="selectedChannel()" (close)="closePlayer()" />
-}
+  <!-- ════════════════════════════════════
+       CHANNEL PLAYER (overlay)
+       ════════════════════════════════════ -->
+  @if (playerOpen()) {
+    <app-channel-player
+      [channel]="selectedChannel()!"
+      (close)="closePlayer()"
+    />
+  }
+
+  <!-- ════════════════════════════════════
+       EPG PANEL (slides right-to-left)
+       ════════════════════════════════════ -->
+  <app-epg-panel
+    [open]="epgOpen()"
+    [channelName]="epgChannel()?.name ?? ''"
+    [channelLogo]="epgChannel()?.logoUrl"
+    (closePanel)="closeEpg()"
+  />
+</section>

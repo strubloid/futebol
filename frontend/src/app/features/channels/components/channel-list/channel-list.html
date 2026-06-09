@@ -4,6 +4,7 @@
       [channel]="channel"
       [isFavorite]="isFavorite(channel)"
       (channelSelected)="channelSelected.emit($event)"
+      (showEpg)="showEpg.emit($event)"
       (favoriteToggled)="favoriteToggled.emit($event)"
     />
   } @empty {

@@ -13,6 +13,7 @@ export class ChannelListComponent {
   readonly channels = input.required<Channel[]>();
   readonly favoriteIds = input<string[]>([]);
   readonly channelSelected = output<Channel>();
+  readonly showEpg = output<Channel>();
   readonly favoriteToggled = output<Channel>();
 
   isFavorite(channel: Channel): boolean {

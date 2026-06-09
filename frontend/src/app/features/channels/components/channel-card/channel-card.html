@@ -2,6 +2,7 @@
   type="button"
   class="channel-card"
   [class.favorite]="isFavorite()"
+  [class.premium]="!channel().isFree"
   (click)="channelSelected.emit(channel())"
 >
   <div class="card-poster">
@@ -17,14 +18,30 @@
 
   <div class="card-info">
     <strong class="card-name">{{ channel().name }}</strong>
-    <span class="card-meta">{{ channel().sourcePlaylistName }}</span>
+    <span class="card-meta">
+      {{ channel().sourcePlaylistName }}
+      @if (!channel().isFree) {
+        <span class="card-premium">🔒</span>
+      }
+    </span>
   </div>
 
-  <button
-    type="button"
-    class="fave-btn"
-    [class.active]="isFavorite()"
-    (click)="$event.stopPropagation(); favoriteToggled.emit(channel())"
-    [attr.aria-label]="isFavorite() ? 'Unfavorite' : 'Favorite'"
-  >♥</button>
+  <div class="card-actions">
+    <button
+      type="button"
+      class="epg-btn"
+      (click)="$event.stopPropagation(); showEpg.emit(channel())"
+      title="Programação de TV"
+      aria-label="Ver programação"
+    >
+      📋
+    </button>
+    <button
+      type="button"
+      class="fave-btn"
+      [class.active]="isFavorite()"
+      (click)="$event.stopPropagation(); favoriteToggled.emit(channel())"
+      [attr.aria-label]="isFavorite() ? 'Unfavorite' : 'Favorite'"
+    >♥</button>
+  </div>
 </button>

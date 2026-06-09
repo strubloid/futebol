@@ -1,0 +1,233 @@
+<section class="guide-page" aria-label="TV Guide">
+
+  <!-- ─── Header with back + title ─── -->
+  <header class="guide-header">
+    <div class="guide-header-left">
+      <a routerLink="/" class="back-btn" title="Back to channels">‹ channels</a>
+      <h1 class="guide-title">TV Guide</h1>
+    </div>
+    <div class="guide-header-right">
+      @if (!isLoading()) {
+        <span class="guide-stats">
+          {{ channelsWithGuide().length }} / {{ channels().length }} channels
+        </span>
+      }
+    </div>
+  </header>
+
+  <!-- ─── Loading ─── -->
+  @if (isLoading()) {
+    <div class="loading-screen">
+      <div class="loading-terminal">
+        <div class="loading-bar">
+          <div class="loading-bar-fill" [style.width.%]="
+            totalToLoad() > 0
+              ? (loadedCount() / totalToLoad()) * 100
+              : 0
+          "></div>
+        </div>
+        <div class="loading-lines">
+          <span class="load-line">{{ loadingMessage() }}</span>
+          <span class="load-line dim">
+            ▸ {{ loadedCount() }} / {{ totalToLoad() }} channels
+          </span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ─── Error ─── -->
+  @if (error(); as err) {
+    <div class="error-banner" role="alert">
+      <span class="error-icon">⚠</span>
+      <p class="error-message">{{ err }}</p>
+    </div>
+  }
+
+  <!-- ─── Controls ─── -->
+  @if (!isLoading()) {
+    <div class="guide-controls">
+      <app-channel-filters
+        [filters]="filters()"
+        [allChannels]="channels()"
+        [playlists]="playlistNames()"
+        (filtersChange)="updateFilters($event)"
+      />
+
+      <div class="guide-view-controls">
+        <div class="time-views">
+          <button
+            type="button"
+            class="view-btn"
+            [class.active]="timeView() === 'now'"
+            (click)="setTimeView('now')"
+          >live now</button>
+          <button
+            type="button"
+            class="view-btn"
+            [class.active]="timeView() === 'later'"
+            (click)="setTimeView('later')"
+          >upcoming</button>
+          <button
+            type="button"
+            class="view-btn"
+            [class.active]="timeView() === 'all'"
+            (click)="setTimeView('all')"
+          >all</button>
+        </div>
+        <div class="sort-controls">
+          <button
+            type="button"
+            class="view-btn"
+            [class.active]="sortBy() === 'name'"
+            (click)="setSortBy('name')"
+          >A-Z</button>
+          <button
+            type="button"
+            class="view-btn"
+            [class.active]="sortBy() === 'now'"
+            (click)="setSortBy('now')"
+          >by programme</button>
+        </div>
+        <button type="button" class="reset-btn" (click)="resetFilters()">↺ reset</button>
+      </div>
+    </div>
+
+    <!-- ─── Live Now highlight ─── -->
+    @if (timeView() === 'now' && liveChannels().length > 0) {
+      <div class="section-label">
+        <span class="live-dot">●</span> Live now on {{ liveChannels().length }} channels
+      </div>
+    }
+
+    <!-- ─── Channel list ─── -->
+    @if (enrichedChannels().length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">📺</span>
+        <p>no channels with guide data match your filters</p>
+        <p class="empty-hint">{{ channelsWithoutGuide().length }} channels not yet indexed for guide data</p>
+      </div>
+    } @else {
+      <div class="guide-list">
+        @for (item of sortedChannels(); track trackByChannelId($index, item)) {
+          <article
+            class="guide-card"
+            [class.has-live]="item.guide.nowPlaying?.isLive"
+          >
+            <!-- Channel info -->
+            <div class="guide-channel">
+              @if (item.guide.logoUrl) {
+                <img [src]="item.guide.logoUrl" [alt]="item.guide.name" class="guide-logo" loading="lazy" />
+              } @else {
+                <span class="guide-logo-fallback">
+                  {{ item.guide.name.slice(0, 2).toUpperCase() }}
+                </span>
+              }
+              <div class="guide-channel-info">
+                <strong class="guide-channel-name">{{ item.guide.name }}</strong>
+                <span class="guide-channel-meta">{{ item.channel.sourcePlaylistName }}</span>
+              </div>
+            </div>
+
+            <!-- Now playing -->
+            @if (item.guide.nowPlaying; as now) {
+              <div class="guide-now">
+                <span class="guide-now-badge">
+                  @if (now.isLive) {
+                    <span class="live-indicator">●</span> AO VIVO
+                  } @else {
+                    AGORA
+                  }
+                </span>
+                <div class="guide-now-info">
+                  <span class="guide-now-title">{{ now.title }}</span>
+                  @if (now.description) {
+                    <span class="guide-now-desc">{{ now.description }}</span>
+                  }
+                </div>
+                <span class="guide-now-time">
+                  {{ formatTime(now.start) }} – {{ formatTime(now.stop) }}
+                  <span class="guide-duration">{{ durationMinutes(now.start, now.stop) }}min</span>
+                </span>
+              </div>
+            } @else {
+              <div class="guide-now guide-now-empty">
+                <span class="guide-now-badge">SEM PROGRAMAÇÃO</span>
+                <span class="guide-now-empty-hint">nenhum programa disponível</span>
+              </div>
+            }
+
+            <!-- Upcoming programmes (next 2) -->
+            @if (timeView() !== 'now') {
+              @let upcomingProgs = item.guide.programmes | slice:1:3;
+              @if (upcomingProgs.length > 0) {
+                <div class="guide-upcoming">
+                  @for (prog of upcomingProgs; track trackByProgramme($index, prog)) {
+                    <div class="guide-upcoming-item">
+                      <time class="guide-upcoming-time">{{ formatTime(prog.start) }}</time>
+                      <span class="guide-upcoming-title">{{ prog.title }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            }
+
+            <!-- Full guide button -->
+            <button
+              type="button"
+              class="guide-expand-btn"
+              (click)="openGuide(item.guide)"
+              title="Ver programação completa"
+            >
+              📋 todos os horários
+            </button>
+          </article>
+        }
+      </div>
+    }
+  }
+
+  <!-- ─── Full guide panel ─── -->
+  @if (guideOpen() && selectedChannel()) {
+    <div class="guide-overlay" (click)="closeGuide()">
+      <aside class="guide-panel" (click)="$event.stopPropagation()" role="dialog">
+        <header class="guide-panel-header">
+          <button type="button" class="guide-close" (click)="closeGuide()">✕</button>
+          @if (selectedChannel()!.logoUrl) {
+            <img [src]="selectedChannel()!.logoUrl" alt="" class="guide-panel-logo" />
+          }
+          <div>
+            <h2 class="guide-panel-name">{{ selectedChannel()!.name }}</h2>
+            <time class="guide-panel-date">{{ '' | date:'fullDate' }}</time>
+          </div>
+        </header>
+
+        <div class="guide-panel-programmes">
+          @for (prog of selectedChannel()!.programmes; track trackByProgramme($index, prog)) {
+            <div
+              class="guide-prog-item"
+              [class.live]="prog.isLive"
+              [class.past]="isPastProgramme(prog)"
+            >
+              <div class="guide-prog-time-col">
+                <time class="guide-prog-time">{{ formatTime(prog.start) }}</time>
+                @if (prog.isLive) {
+                  <span class="guide-prog-live">●</span>
+                }
+              </div>
+              <div class="guide-prog-info">
+                <span class="guide-prog-title">{{ prog.title }}</span>
+                @if (prog.description) {
+                  <p class="guide-prog-desc">{{ prog.description }}</p>
+                }
+              </div>
+              @if (prog.category) {
+                <span class="guide-prog-category">{{ prog.category }}</span>
+              }
+            </div>
+          }
+        </div>
+      </aside>
+    </div>
+  }
+</section>

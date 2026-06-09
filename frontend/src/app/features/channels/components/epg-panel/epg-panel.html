@@ -1,0 +1,66 @@
+<div class="epg-overlay" [class.epg-open]="open()" (click)="close()">
+  <aside class="epg-panel" [class.epg-open]="open()" (click)="$event.stopPropagation()" role="dialog" aria-label="Programação de TV">
+    <!-- Panel Header -->
+    <header class="epg-header">
+      <button type="button" class="epg-close" (click)="close()" aria-label="Fechar programação">
+        ✕
+      </button>
+      <div class="epg-channel-info">
+        @if (channelLogo(); as logo) {
+          <img [src]="logo" alt="" class="epg-logo" loading="lazy" />
+        }
+        <div>
+          <h3 class="epg-channel-name">{{ channelName() }}</h3>
+          <time class="epg-date">
+            {{ weekDayNames[today.getDay()] }}, {{ today | date:'dd/MM/yyyy' }}
+          </time>
+        </div>
+      </div>
+    </header>
+
+    <!-- Program List -->
+    <div class="epg-scroll" #scrollContainer>
+      @if (programs.length === 0) {
+        <div class="epg-empty">
+          <span class="epg-empty-icon">📺</span>
+          <p>Programação não disponível para este canal</p>
+        </div>
+      } @else {
+        <div class="epg-timeline">
+          @for (prog of programs; track $index) {
+            <div
+              class="epg-item"
+              [class.epg-now]="$index === nowIndex"
+              [class.epg-past]="$index < nowIndex"
+              [class.epg-upcoming]="$index > nowIndex"
+            >
+              <time class="epg-time">{{ prog.time }}</time>
+              <div class="epg-program">
+                <div class="epg-title-row">
+                  <span class="epg-title">{{ prog.title }}</span>
+                  @if (prog.category) {
+                    <span class="epg-badge" [class]="'epg-badge--' + prog.category">
+                      {{ prog.category }}
+                    </span>
+                  }
+                </div>
+                @if (prog.description) {
+                  <p class="epg-desc">{{ prog.description }}</p>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Footer Legend -->
+    <footer class="epg-footer">
+      <span class="epg-legend-item epg-legend-now">● agora</span>
+      <span class="epg-legend-item">○ depois</span>
+      @if (channelName().includes('SporTV') || channelName().includes('ESPN') || channelName().includes('Combate') || channelName().includes('Premiere') || channelName().includes('Fox')) {
+        <span class="epg-premium-badge">🔒 premium</span>
+      }
+    </footer>
+  </aside>
+</div>

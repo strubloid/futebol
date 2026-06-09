@@ -26,17 +26,23 @@ export class M3uParserService {
 
       const name = pendingMetadata?.name || this.nameFromUrl(line);
       const id = `${playlist.id}-${channels.length}-${this.slug(name)}`;
+      const attrs = pendingMetadata?.attributes || {};
 
       channels.push({
         id,
         name,
         streamUrl: line,
-        groupTitle: pendingMetadata?.attributes['group-title'] || 'Ungrouped',
-        logoUrl: pendingMetadata?.attributes['tvg-logo'] || null,
-        tvgId: pendingMetadata?.attributes['tvg-id'] || null,
+        groupTitle: attrs['group-title'] || 'Ungrouped',
+        logoUrl: attrs['tvg-logo'] || null,
+        tvgId: attrs['tvg-id'] || null,
         sourcePlaylistId: playlist.id,
         sourcePlaylistName: playlist.name,
         working: true,
+        language: attrs['language'] || null,
+        country: attrs['country'] || null,
+        state: attrs['state'] || null,
+        isFree: attrs['is-free'] !== 'false',
+        channelType: attrs['channel-type'] || null,
       });
 
       pendingMetadata = null;

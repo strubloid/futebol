@@ -44,6 +44,18 @@ class ChannelIndexEntry:
     extra_headers: dict[str, str] = field(default_factory=dict)
     """Extra HTTP headers the stream needs (e.g. Referer, User-Agent)."""
 
+    # Organization fields
+    language: str | None = None
+    """Language code: 'pt' (Portuguese), 'en' (English), 'es' (Spanish), etc."""
+    country: str | None = None
+    """Country code: 'BR' (Brazil), 'PT' (Portugal), 'US' (United States), etc."""
+    state: str | None = None
+    """Brazilian state: 'SP', 'RJ', 'MG', 'RS', 'BA', etc. (for BR channels only)."""
+    is_free: bool = True
+    """True = free-to-air / open channel, False = premium / subscription."""
+    channel_type: str | None = None
+    """'sports', 'news', 'entertainment', 'movies', 'religious', 'general', etc."""
+
     def to_dict(self) -> dict[str, Any]:
         d: dict[str, Any] = {
             "tvgId": self.tvg_id,
@@ -55,6 +67,11 @@ class ChannelIndexEntry:
             "sourcePlaylistId": self.source_playlist_id,
             "working": self.working,
             "tags": list(self.tags),
+            "language": self.language,
+            "country": self.country,
+            "state": self.state,
+            "isFree": self.is_free,
+            "channelType": self.channel_type,
         }
         if self.extra_headers:
             d["extraHeaders"] = dict(self.extra_headers)
@@ -73,6 +90,11 @@ class ChannelIndexEntry:
             working=data.get("working", True),
             tags=list(data.get("tags", [])),
             extra_headers=dict(data.get("extraHeaders", {})),
+            language=data.get("language"),
+            country=data.get("country"),
+            state=data.get("state"),
+            is_free=data.get("isFree", True),
+            channel_type=data.get("channelType"),
         )
 
 
@@ -528,6 +550,14 @@ class ChannelIndexService:
             # #EXTVLCOPT values override #EXTINF attributes
             extra_headers.update(pending_extra_headers)
 
+            # Extract language/country/state/is-free/channel-type from EXTINF
+            language = pending_attrs.get("language")
+            country = pending_attrs.get("country")
+            state = pending_attrs.get("state")
+            is_free_str = pending_attrs.get("is-free")
+            is_free = is_free_str.lower() != "false" if is_free_str else True
+            channel_type = pending_attrs.get("channel-type")
+
             entries.append(
                 ChannelIndexEntry(
                     tvg_id=tvg_id,
@@ -538,6 +568,11 @@ class ChannelIndexService:
                     source_playlist=playlist_name,
                     source_playlist_id=playlist_id,
                     extra_headers=extra_headers,
+                    language=language,
+                    country=country,
+                    state=state,
+                    is_free=is_free,
+                    channel_type=channel_type,
                 )
             )
             pending_attrs = None

@@ -11,5 +11,6 @@ export class ChannelCardComponent {
   readonly channel = input.required<Channel>();
   readonly isFavorite = input(false);
   readonly channelSelected = output<Channel>();
+  readonly showEpg = output<Channel>();
   readonly favoriteToggled = output<Channel>();
 }

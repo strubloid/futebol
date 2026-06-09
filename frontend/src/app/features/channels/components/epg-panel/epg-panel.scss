@@ -1,0 +1,318 @@
+:host {
+  display: contents;
+}
+
+/* ─── Overlay (click to close) ─── */
+.epg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 260ms ease, pointer-events 0ms 260ms;
+}
+
+.epg-overlay.epg-open {
+  pointer-events: auto;
+  opacity: 1;
+  transition: opacity 260ms ease;
+}
+
+/* ─── Panel itself ─── */
+.epg-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 92vw);
+  z-index: 1001;
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.3);
+}
+
+.epg-panel.epg-open {
+  transform: translateX(0);
+}
+
+/* ─── Header ─── */
+.epg-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.epg-close {
+  align-self: flex-end;
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 160ms ease, color 160ms ease;
+
+  &:hover {
+    border-color: var(--green-primary);
+    color: var(--green-primary);
+  }
+}
+
+.epg-channel-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.epg-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: var(--bg-surface);
+  padding: 2px;
+}
+
+.epg-channel-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.epg-date {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+/* ─── Scrollable program list ─── */
+.epg-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+}
+
+.epg-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 200px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.epg-empty-icon {
+  font-size: 2.4rem;
+  opacity: 0.5;
+}
+
+/* ─── Timeline program items ─── */
+.epg-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
+
+.epg-timeline::before {
+  content: '';
+  position: absolute;
+  left: 58px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border-color);
+}
+
+.epg-item {
+  display: flex;
+  gap: 12px;
+  padding: 8px 8px 8px 0;
+  border-radius: 4px;
+  transition: background 120ms ease;
+  position: relative;
+
+  &:hover {
+    background: var(--bg-surface);
+  }
+}
+
+.epg-time {
+  flex-shrink: 0;
+  width: 50px;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-weight: 600;
+  padding-top: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Now indicator dot */
+.epg-item.epg-now .epg-time::after {
+  content: '';
+  position: absolute;
+  right: -15px;
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--green-primary);
+  box-shadow: 0 0 6px var(--green-glow);
+  z-index: 2;
+}
+
+.epg-item.epg-now {
+  background: rgba(76, 175, 80, 0.06);
+  border-left: 3px solid var(--green-primary);
+  margin-left: -3px;
+  padding-left: 8px;
+}
+
+.epg-item.epg-past {
+  opacity: 0.55;
+}
+
+.epg-item.epg-past .epg-time {
+  color: var(--text-muted);
+}
+
+.epg-program {
+  flex: 1;
+  min-width: 0;
+}
+
+.epg-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.epg-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.epg-desc {
+  margin: 3px 0 0;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Category badges */
+.epg-badge {
+  font-size: 0.62rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.epg-badge--sports {
+  background: rgba(76, 175, 80, 0.15);
+  color: #66bb6a;
+}
+
+.epg-badge--news {
+  background: rgba(66, 165, 245, 0.15);
+  color: #42a5f5;
+}
+
+.epg-badge--talk {
+  background: rgba(255, 183, 77, 0.15);
+  color: #ffa726;
+}
+
+.epg-badge--entertainment {
+  background: rgba(171, 71, 188, 0.15);
+  color: #ab47bc;
+}
+
+.epg-badge--kids {
+  background: rgba(255, 138, 101, 0.15);
+  color: #ff7043;
+}
+
+.epg-badge--movies {
+  background: rgba(239, 83, 80, 0.15);
+  color: #ef5350;
+}
+
+.epg-badge--general {
+  background: rgba(158, 158, 158, 0.15);
+  color: #bdbdbd;
+}
+
+/* ─── Footer ─── */
+.epg-footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  background: var(--bg-secondary);
+}
+
+.epg-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.epg-legend-now {
+  color: var(--green-primary);
+  font-weight: 600;
+}
+
+.epg-premium-badge {
+  margin-left: auto;
+  color: #ffa726;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 640px) {
+  .epg-panel {
+    width: 100vw;
+  }
+
+  .epg-time {
+    width: 40px;
+    font-size: 0.7rem;
+  }
+
+  .epg-timeline::before {
+    left: 48px;
+  }
+
+  .epg-header {
+    padding: 12px;
+  }
+}

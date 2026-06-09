@@ -42,7 +42,6 @@ export class ChannelsLoaderService {
 
   /**
    * Convert a ChannelIndexEntry (from channels/index.json) to the app's Channel model.
-   * Only includes channels marked as working.
    */
   private entryToChannel(entry: ChannelIndexEntry): Channel {
     return {
@@ -55,6 +54,11 @@ export class ChannelsLoaderService {
       sourcePlaylistId: entry.sourcePlaylistId,
       sourcePlaylistName: entry.sourcePlaylist,
       working: entry.working !== false, // default to true
+      language: entry.language || null,
+      country: entry.country || null,
+      state: entry.state || null,
+      isFree: entry.isFree !== false, // default true
+      channelType: entry.channelType || null,
     };
   }
 

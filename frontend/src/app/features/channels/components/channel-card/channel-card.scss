@@ -31,6 +31,10 @@
   }
 }
 
+.channel-card.premium {
+  border-left: 3px solid #ffa726;
+}
+
 /* ── Poster image area ── */
 .card-poster {
   position: relative;
@@ -115,31 +119,56 @@
   letter-spacing: 0.06em;
 }
 
-/* ── Fave button ── */
-.fave-btn {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
-  background: rgba(0, 10, 0, 0.6);
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 0.8rem;
-  line-height: 1;
-  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
-  opacity: 0;
+.card-premium {
+  color: #ffa726;
+  margin-left: 4px;
 }
 
-.channel-card:hover .fave-btn {
-  opacity: 1;
+/* ── Actions row (inside card-info) ── */
+.card-actions {
+  display: flex;
+  gap: 4px;
+  padding: 0 10px 8px;
+}
+
+.epg-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+
+  &:hover {
+    border-color: var(--green-primary);
+    color: var(--green-primary);
+    background: rgba(76, 175, 80, 0.06);
+  }
+}
+
+.fave-btn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
 .fave-btn.active {
-  opacity: 1;
   color: #ff69b4;
   border-color: rgba(255, 105, 180, 0.4);
   background: rgba(255, 105, 180, 0.08);
