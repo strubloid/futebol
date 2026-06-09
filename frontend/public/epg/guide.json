@@ -1,0 +1,656 @@
+{
+  "generated": "2026-06-09T00:31:49.210544+00:00",
+  "channels": [
+    {
+      "id": "AdessoTV.br@SD",
+      "name": "Adesso TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "AmazonSat.br@SD",
+      "name": "Amazon Sat (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AngelTV.in@Portuguese",
+      "name": "Angel TV Portuguese (720p)",
+      "logo": ""
+    },
+    {
+      "id": "AWTV.br@HD",
+      "name": "AWTV (1080p) [Geo-blocked]",
+      "logo": ""
+    },
+    {
+      "id": "Canal38.br@SD",
+      "name": "Canal 38 (720p)",
+      "logo": ""
+    },
+    {
+      "id": "CanalEducacao.br@SD",
+      "name": "Canal Educação (720p)",
+      "logo": ""
+    },
+    {
+      "id": "CanalGov.br@SD",
+      "name": "Canal Gov (720p)",
+      "logo": ""
+    },
+    {
+      "id": "CazeTV.br@SD",
+      "name": "CazeTV (1080i)",
+      "logo": ""
+    },
+    {
+      "id": "ChromaTV.br@SD",
+      "name": "Chroma TV (480p)",
+      "logo": ""
+    },
+    {
+      "id": "ClassiqueTV.br@SD",
+      "name": "Classique TV (360p)",
+      "logo": ""
+    },
+    {
+      "id": "COMBrasil.br@SD",
+      "name": "COM Brasil (1080p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "ConecTVBrasil.br@SD",
+      "name": "ConecTV Brasil (720p)",
+      "logo": ""
+    },
+    {
+      "id": "DemaisTV.br@SD",
+      "name": "Demais TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "DespertarTV.br@HD",
+      "name": "Despertar TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "ElyTV.br@SD",
+      "name": "ElyTV (360p)",
+      "logo": ""
+    },
+    {
+      "id": "EUTV.br@SD",
+      "name": "EUTV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "FalaLitoral.br@SD",
+      "name": "Fala Litoral (480p)",
+      "logo": ""
+    },
+    {
+      "id": "FonteTV.br@SD",
+      "name": "Fonte TV (1080p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "ForaTedioTV.br@SD",
+      "name": "Fora Tedio TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "GospelCartoon.br@SD",
+      "name": "Gospel Cartoon (360p)",
+      "logo": ""
+    },
+    {
+      "id": "GospelMovieTV.br@SD",
+      "name": "Gospel Movie TV (360p)",
+      "logo": ""
+    },
+    {
+      "id": "ISTV.br@SD",
+      "name": "ISTV (720p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "JovemPanNews.br@SD",
+      "name": "Jovem Pan News (JP News) (1080p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "KuriakosKids.pt@SD",
+      "name": "Kuriakos Kids (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "Loading.br@SD",
+      "name": "Loading (720p)",
+      "logo": ""
+    },
+    {
+      "id": "MyTimeMovieNetwork.br@SD",
+      "name": "MyTime Movie Network Brazil (720p)",
+      "logo": ""
+    },
+    {
+      "id": "NickOnline.br@SD",
+      "name": "NickOnline (576p)",
+      "logo": ""
+    },
+    {
+      "id": "NickToonsBrasil.br@SD",
+      "name": "NickToons Brasil (480p)",
+      "logo": ""
+    },
+    {
+      "id": "NovaEraTV.br@SD",
+      "name": "Nova Era TV (1080p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "PlayTV.br@SD",
+      "name": "Play TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "PlenaTV.br@SD",
+      "name": "Plena TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "PrimerTV.br@SD",
+      "name": "Primer TV (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "RBATV.br@SD",
+      "name": "RBATV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "RecordNews.br@SD",
+      "name": "Record News (720p)",
+      "logo": ""
+    },
+    {
+      "id": "RecordTVInteriorSP.br@SD",
+      "name": "RecordTV Interior SP",
+      "logo": ""
+    },
+    {
+      "id": "RedeGlobo.br@SD",
+      "name": "Rede Globo (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "RedeGospel.br@SD",
+      "name": "Rede Gospel (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "RedeNGT.br@SD",
+      "name": "Rede NGT (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "RedeSPTV.br@SD",
+      "name": "Rede SPTV (360p)",
+      "logo": ""
+    },
+    {
+      "id": "RedeTVES.br@SD",
+      "name": "Rede TV! ES (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "RedeTVMais.br@SD",
+      "name": "Rede TV! Mais",
+      "logo": ""
+    },
+    {
+      "id": "RedeTVParana.br@SD",
+      "name": "RedeTV! Parana",
+      "logo": ""
+    },
+    {
+      "id": "RITTV.br@SD",
+      "name": "RIT TV (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "SBTCuiaba.br@SD",
+      "name": "SBT Cuiaba",
+      "logo": ""
+    },
+    {
+      "id": "SBTInterior.br@SD",
+      "name": "SBT Interior (720p)",
+      "logo": ""
+    },
+    {
+      "id": "SBTNovaMutum.br@SD",
+      "name": "SBT Nova Mutum",
+      "logo": ""
+    },
+    {
+      "id": "SBTRondonopolis.br@SD",
+      "name": "SBT Rondonopolis",
+      "logo": ""
+    },
+    {
+      "id": "SBTSinop.br@SD",
+      "name": "SBT Sinop",
+      "logo": ""
+    },
+    {
+      "id": "SICTV.br@SD",
+      "name": "SIC TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "STZTV.br@SD",
+      "name": "STZ TV (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TCM10HD.br@SD",
+      "name": "TCM 10 HD (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TraceBrazuca.fr@HD",
+      "name": "Trace Brasil (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TVACritica.br@SD",
+      "name": "TV A Critica",
+      "logo": ""
+    },
+    {
+      "id": "TVAFolha.br@SD",
+      "name": "TV A Folha (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVAldeia.br@SD",
+      "name": "TV Aldeia (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVAliancaCatarinense.br@SD",
+      "name": "TV Aliança Catarinense (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVAlternativa.br@SD",
+      "name": "TV Alternativa (410p)",
+      "logo": ""
+    },
+    {
+      "id": "TVAparecida.br@SD",
+      "name": "TV Aparecida (1080p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "TVBahia.br@HD",
+      "name": "TV Bahia (1080i)",
+      "logo": ""
+    },
+    {
+      "id": "TVBrasil.br@SD",
+      "name": "TV Brasil (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVBrusque.br@SD",
+      "name": "TV Brusque (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVCamara.br@SD",
+      "name": "TV Câmara (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TVCancaoNova.br@SD",
+      "name": "TV Cancao Nova (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVCidadeVerdeCuiaba.br@SD",
+      "name": "TV Cidade Verde Cuiaba",
+      "logo": ""
+    },
+    {
+      "id": "TVClube.br@SD",
+      "name": "TV Clube (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVCultura.br@SD",
+      "name": "TV Cultura",
+      "logo": ""
+    },
+    {
+      "id": "TVCuruca.br@SD",
+      "name": "TV Curuça (360p)",
+      "logo": ""
+    },
+    {
+      "id": "TVEncontrodasAguas.br@SD",
+      "name": "TV Encontro das Aguas",
+      "logo": ""
+    },
+    {
+      "id": "TVFronteira.br@SD",
+      "name": "TV Fronteira (480i)",
+      "logo": ""
+    },
+    {
+      "id": "TVFuturo.br@SD",
+      "name": "TV Futuro (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TVGuara.br@SD",
+      "name": "TV Guará (720p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "TVLifeAmerica.br@HD",
+      "name": "TV Life America (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVMaisMarica.br@SD",
+      "name": "TV Mais Maricá (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TVManaBrasil.pt@SD",
+      "name": "TV Maná Brasil (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TVMarajoara.br@SD",
+      "name": "TV Marajoara (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVMAX.br@SD",
+      "name": "TV MAX (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVMetropole.br@SD",
+      "name": "TV Metropole (720p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "TVPadreCicero.br@SD",
+      "name": "TV Padre Cicero (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVPampa.br@SD",
+      "name": "TV Pampa",
+      "logo": ""
+    },
+    {
+      "id": "TVPantanalMS.br@SD",
+      "name": "TV Pantanal MS (360p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "TVParaense.br@HD",
+      "name": "TV Paraense (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVParanaTurismo.br@SD",
+      "name": "TV Paraná Turismo (720p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "TVPassoFundo.br@SD",
+      "name": "TV Passo Fundo (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVSaoRaimundo.br@SD",
+      "name": "TV São Raimundo (268p)",
+      "logo": ""
+    },
+    {
+      "id": "TVSeries.br@SD",
+      "name": "TV Series 1 As Panteras (480p)",
+      "logo": ""
+    },
+    {
+      "id": "TVSimCachoeiro.br@SD",
+      "name": "TV Sim Cachoeiro (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVSimColatina.br@SD",
+      "name": "TV Sim Colatina (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVSulBahia.br@SD",
+      "name": "TV Sul Bahia (320p)",
+      "logo": ""
+    },
+    {
+      "id": "TVSuldeMinas.br@SD",
+      "name": "TV Sul de Minas (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVTerceiroAnjo.br@SD",
+      "name": "TV Terceiro Anjo (360p)",
+      "logo": ""
+    },
+    {
+      "id": "TVUFOP.br@HD",
+      "name": "TV UFOP (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TVUniversal.br@SD",
+      "name": "TV Universal (480p)",
+      "logo": ""
+    },
+    {
+      "id": "TVComunitaria.br@SD",
+      "name": "TVCOM DF (360p)",
+      "logo": ""
+    },
+    {
+      "id": "TVCOMMaceio.br@SD",
+      "name": "TVCOM Maceió (480p)",
+      "logo": ""
+    },
+    {
+      "id": "TVERS.br@SD",
+      "name": "TVE RS (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "TVideoNews.br@SD",
+      "name": "TVídeoNews (720p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "TVitape.br@SD",
+      "name": "TVitapé (720p)",
+      "logo": ""
+    },
+    {
+      "id": "TVNBN.br@SD",
+      "name": "TVNBN (720p)",
+      "logo": ""
+    },
+    {
+      "id": "UMATV.br@HD",
+      "name": "UMA TV",
+      "logo": ""
+    },
+    {
+      "id": "UnisulTV.br@SD",
+      "name": "UNISUL TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "ACCDigitalNetwork.us@SD",
+      "name": "ACCDN (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "ADOTV.bj@SD",
+      "name": "ADO TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "Africa24Sport.fr@SD",
+      "name": "Africa 24 Sport (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AlIraqiaSport.iq@SD",
+      "name": "Al Iraqia Sport (720p)",
+      "logo": ""
+    },
+    {
+      "id": "AlkassFour.qa@SD",
+      "name": "Alkass Four (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AlkassOne.qa@SD",
+      "name": "Alkass One (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AlkassSHOOF.qa@SD",
+      "name": "Alkass SHOOF (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AlkassSHOOF2.qa@SD",
+      "name": "Alkass SHOOF 2 (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AlkassSix.qa@SD",
+      "name": "Alkass Six (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AlkassThree.qa@SD",
+      "name": "Alkass Three (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AlkassTwo.qa@SD",
+      "name": "Alkass Two (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "Arryadia.ma@HD",
+      "name": "Arryadia (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "ArryadiaHD1.ma@HD",
+      "name": "Arryadia HD 1 (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "ArryadiaHD2.ma@HD",
+      "name": "Arryadia HD 2 (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "ArryadiaHD3.ma@HD",
+      "name": "Arryadia HD 3 (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "AS3SportTV.ve@SD",
+      "name": "AS3 Sport TV (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "ATGLive.se@SD",
+      "name": "ATG Live (720p)",
+      "logo": ""
+    },
+    {
+      "id": "BahrainSports1.bh@SD",
+      "name": "Bahrain Sports 1 (720p) [Not 24/7]",
+      "logo": ""
+    },
+    {
+      "id": "beINSPORTSXTRA.us@SD",
+      "name": "beIN SPORTS XTRA (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "beINSPORTSXTRAenEspanol.us@SD",
+      "name": "beIN Sports XTRA en Espanol (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "BEKSports.us@West",
+      "name": "BEK TV Sports West (720p)",
+      "logo": ""
+    },
+    {
+      "id": "CCTV16.cn@HD",
+      "name": "CCTV-16 (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "CCTVBilliards.cn@HD",
+      "name": "CCTV-Billiards (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "CCTVGolfTennis.cn@HD",
+      "name": "CCTV-Golf & Tennis (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "CCTVStormFootball.cn@HD",
+      "name": "CCTV-Storm Football (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "ColimdoTV.do@SD",
+      "name": "ColimdoT TV (720p)",
+      "logo": ""
+    },
+    {
+      "id": "CricketGold.au@SD",
+      "name": "Cricket Gold (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "CTSport.cz@SD",
+      "name": "ČT Sport (720p)",
+      "logo": ""
+    },
+    {
+      "id": "DDSports.in@SD",
+      "name": "DD Sports SD (1080p)",
+      "logo": ""
+    },
+    {
+      "id": "DraftKingsNetwork.us@SD",
+      "name": "DraftKings Network (1080p)",
+      "logo": ""
+    }
+  ],
+  "programs": []
+}

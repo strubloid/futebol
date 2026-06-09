@@ -23,6 +23,8 @@ from rich.prompt import Confirm, Prompt
 from rich.text import Text
 
 from futebol.app.application import Application
+from futebol.services.epg_scraper_service import EpgScraperService
+from futebol.services.channel_index_service import ChannelIndexService
 
 # ---------------------------------------------------------------------------
 _console = Console()
@@ -69,6 +71,9 @@ def run_main_menu() -> None:
             "       [dim]Restore index from channels/backup.json[/]"
         )
         _console.print()
+        _console.print("  [bold yellow]4[/]  [white]📺  Scrape EPG Guide[/]")
+        _console.print("       [dim]Fetch programme data from public sources[/]")
+        _console.print()
         _console.print("  [bold yellow]0[/]  [white]🚪  Exit[/]")
         _console.print()
         _console.print(
@@ -93,8 +98,10 @@ def run_main_menu() -> None:
             _run_update_channels(app)
         elif choice == "3":
             _run_restore_channels(app)
+        elif choice == "4":
+            _run_epg_scrape()
         else:
-            _console.print("[red]Unknown option. Pick 1, 2, 3, or 0.[/]")
+            _console.print("[red]Unknown option. Pick 1, 2, 3, 4, or 0.[/]")
 
 
 # ---------------------------------------------------------------------------
@@ -193,4 +200,60 @@ def _run_restore_channels(app: Application) -> None:
         _console.print("       Synced to frontend")
     else:
         _console.print("[yellow]Backup exists but is empty or corrupted.[/]")
+    _console.print()
+
+
+# ---------------------------------------------------------------------------
+# 4. Scrape EPG Guide
+# ---------------------------------------------------------------------------
+
+
+def _run_epg_scrape() -> None:
+    _header("📺  Scrape EPG Guide", "Fetching programme data for all channels")
+
+    project_root = Path(__file__).resolve().parent.parent.parent
+    channels_dir = project_root / "channels"
+    output_path = project_root / "frontend" / "public" / "epg" / "guide.json"
+
+    index_service = ChannelIndexService(project_root / "m3u", channels_dir)
+    entries = index_service.list_all()
+
+    if not entries:
+        _console.print("[yellow]No channels in index. Run Load Servers first.[/]")
+        return
+
+    _console.print(f"   📺  Scraping EPG for [bold]{len(entries)}[/] channel(s)…")
+    _console.print()
+
+    tvg_ids = [e.tvg_id for e in entries]
+    names = [e.name for e in entries]
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TimeElapsedColumn(),
+        console=_console,
+    ) as progress:
+        task = progress.add_task(
+            "[yellow]Fetching TV schedules...[/]", total=None
+        )
+        scraper = EpgScraperService(
+            channels_dir=channels_dir,
+            output_dir=output_path.parent,
+        )
+        guide = scraper.scrape_all(tvg_ids=tvg_ids, channel_names=names)
+        out = scraper.write_guide(guide)
+        progress.update(task, completed=1, total=1)
+
+    chan_count = len(guide.channels)
+    prog_count = len(guide.programs)
+    _console.print()
+    _console.print(f"   ✅  EPG scraped — [bold]{chan_count}[/] channel(s)")
+    _console.print(f"       [green]{prog_count}[/] programme(s) found")
+    if prog_count == 0:
+        _console.print("       [yellow]No programme data was found for these channels.[/]")
+        _console.print("       [yellow]Public EPG data for Brazilian channels is scarce.[/]")
+    _console.print(f"       💾  Written to {out}")
     _console.print()

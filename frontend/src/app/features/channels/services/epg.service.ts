@@ -1,37 +1,27 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, shareReplay } from 'rxjs/operators';
 
 import { Channel } from '../models/channel.interface';
-import {
-  EpgChannelGuide,
-  EpgProgramme,
-  GuideManifest,
-  IptvOrgChannel,
-  IptvOrgGuide,
-} from '../models/epg.models';
+import { EpgChannelGuide, EpgProgramme } from '../models/epg.models';
 
 /**
- * Fetches and caches TV guide (EPG) data for channels.
+ * EPG data source:
+ * Loads the single static guide.json produced by the Python scraper
+ * (``futebol epg-scrape`` → frontend/public/epg/guide.json).
  *
- * Data sources (all public, no auth):
- * - iptv-org channels.json  – channel metadata + logos
- * - iptv-org guides.json   – per-channel guide source URLs
- * - Per-channel JSON guide  – e.g. https://worker-xxx.onrender.com/guide.json
+ * No per-channel API calls — one fetch, all programmes.
  */
 @Injectable({ providedIn: 'root' })
 export class EpgService {
   private readonly http = inject(HttpClient);
 
-  /** Cache of loaded channel guides, keyed by xmltv_id (without @SD/@HD suffix). */
+  /** Cache of loaded channel guides, keyed by xmltv_id (without @SD/@HD). */
   private guideCache = new Map<string, EpgChannelGuide>();
 
-  private readonly IPTV_ORG_CHANNELS = 'https://iptv-org.github.io/api/channels.json';
-  private readonly IPTV_ORG_GUIDES = 'https://iptv-org.github.io/api/guides.json';
-
-  /** All channels that have guide data, loaded once. */
-  private channelsWithGuide: string[] | null = null;
+  /** Single-source guide — loaded once, shared across subscribers. */
+  private localGuide$: Observable<Map<string, EpgChannelGuide>> | null = null;
 
   /**
    * Strip feed qualifier from tvg-id.
@@ -43,183 +33,118 @@ export class EpgService {
   }
 
   /**
-   * Load guide data for a single channel.
-   * Returns null if no guide source is known for this channel.
+   * Load guide data for a single channel from the local guide.json.
    */
   loadGuideForChannel(channel: Channel): Observable<EpgChannelGuide | null> {
     const xmltvId = this.stripFeed(channel.tvgId);
     if (!xmltvId) return of(null);
-
     return this.loadGuideForChannelId(xmltvId, channel.name);
   }
 
   /**
-   * Load guide data for a channel by its xmltv_id.
-   * Returns null if no guide source is known.
+   * Load guide data for a channel by its xmltv_id from the local guide.
    */
   loadGuideForChannelId(
     xmltvId: string,
-    fallbackName: string,
+    _fallbackName?: string,
   ): Observable<EpgChannelGuide | null> {
-    // Check cache
     if (this.guideCache.has(xmltvId)) {
       return of(this.guideCache.get(xmltvId)!);
     }
-
-    return this.http.get<IptvOrgGuide[]>(this.IPTV_ORG_GUIDES).pipe(
-      switchMap((guides) => {
-        // Find all guide entries matching this channel
-        const matches = guides.filter(
-          (g) =>
-            g.channel === xmltvId || g.channel?.split('@')[0] === xmltvId,
-        );
-
-        // Find a source with JSON format
-        const jsonSource = matches
-          .flatMap((g) => g.sources)
-          .find((s) => s.format === 'JSON' && s.url);
-
-        if (!jsonSource) return of(null);
-
-        return this.fetchAndParseGuide(jsonSource.url, xmltvId, fallbackName);
-      }),
-      catchError(() => of(null)),
-      map((result) => {
-        if (result) {
-          this.guideCache.set(xmltvId, result);
-        }
-        return result;
-      }),
+    return this.loadLocalGuide().pipe(
+      map((map) => map.get(xmltvId) ?? null),
     );
   }
 
   /**
-   * Load guides for multiple channels concurrently.
-   * Only loads if a guide source exists (skips silently if not).
-   * Returns a map of xmltvId → EpgChannelGuide (null entries are skipped).
+   * Load guides for multiple channels from the local guide.json.
+   * One HTTP request for all data.
    */
-  loadGuidesForChannels(channels: Channel[]): Observable<Map<string, EpgChannelGuide>> {
-    const requests: Observable<{ id: string; guide: EpgChannelGuide | null }>[] = [];
-
-    for (const ch of channels) {
-      const xmltvId = this.stripFeed(ch.tvgId);
-      if (!xmltvId) continue;
-      if (this.guideCache.has(xmltvId)) {
-        requests.push(
-          of({ id: xmltvId, guide: this.guideCache.get(xmltvId)! }),
-        );
-      } else {
-        requests.push(
-          this.loadGuideForChannel(ch).pipe(
-            map((guide) => ({ id: xmltvId, guide })),
-          ),
-        );
-      }
-    }
-
-    return forkJoin(requests).pipe(
-      map((results) => {
-        const map_ = new Map<string, EpgChannelGuide>();
-        for (const { id, guide } of results) {
-          if (guide) map_.set(id, guide);
-        }
-        return map_;
-      }),
-    );
+  loadGuidesForChannels(_channels?: Channel[]): Observable<Map<string, EpgChannelGuide>> {
+    return this.loadLocalGuide();
   }
 
-  /**
-   * Get currently cached guides.
-   */
+  /** Get currently cached guides. */
   getCachedGuides(): Map<string, EpgChannelGuide> {
     return this.guideCache;
   }
 
-  /** Load the guide manifest listing channels that have guide data. */
-  loadChannelsWithGuide(): Observable<string[]> {
-    if (this.channelsWithGuide) {
-      return of(this.channelsWithGuide);
+  /**
+   * Fetch the full guide.json once and share it with all subscribers.
+   */
+  loadLocalGuide(): Observable<Map<string, EpgChannelGuide>> {
+    if (this.localGuide$) {
+      return this.localGuide$;
     }
-    return this.http
-      .get<GuideManifest>('/channels/guide-manifest.json')
-      .pipe(
-        map((m) => {
-          this.channelsWithGuide = m.channelsWithGuide;
-          return m.channelsWithGuide;
-        }),
-        catchError(() => {
-          this.channelsWithGuide = [];
-          return of([]);
-        }),
-      );
+
+    this.localGuide$ = this.http.get<any>('/epg/guide.json').pipe(
+      map((data) => this.parseGuide(data)),
+      catchError(() => of(new Map())),
+      shareReplay(1),
+    );
+
+    return this.localGuide$;
   }
 
   // ─── Private helpers ────────────────────────────────────────────────────────
 
-  private fetchAndParseGuide(
-    url: string,
-    xmltvId: string,
-    fallbackName: string,
-  ) {
-    return this.http.get<any>(url, { responseType: 'json' }).pipe(
-      map((data) => {
-        const today = new Date().toISOString().split('T')[0];
-        const now = new Date();
+  private parseGuide(data: any): Map<string, EpgChannelGuide> {
+    const now = new Date();
+    const map = new Map<string, EpgChannelGuide>();
 
-        const chMap = new Map<string, { name: string; logo: string | null }>();
-        for (const ch of data.channels ?? []) {
-          chMap.set(ch.xmltv_id, {
-            name: ch.name ?? fallbackName,
-            logo: ch.logo ?? null,
-          });
-        }
+    // Build a quick lookup of logo per channel id
+    const logoMap = new Map<string, string | null>();
+    for (const ch of data.channels ?? []) {
+      logoMap.set(ch.id, ch.logo || null);
+    }
 
-        const name = chMap.get(xmltvId)?.name ?? fallbackName;
-        const logo = chMap.get(xmltvId)?.logo ?? null;
+    // Group programmes by channel
+    const programmeMap = new Map<string, EpgProgramme[]>();
+    for (const prog of data.programs ?? []) {
+      const channelId = prog.channel;
+      if (!channelId) continue;
 
-        const todaySec = Date.parse(today) / 1000;
-        const tomorrowSec = todaySec + 86400;
+      const entry: EpgProgramme = {
+        channel: channelId,
+        title: prog.title ?? 'Unknown',
+        start: prog.start,
+        stop: prog.stop,
+        description: prog.description || undefined,
+        category: prog.category || undefined,
+        isLive: prog.isLive ?? (new Date(prog.start) <= now && new Date(prog.stop) > now),
+      };
 
-        const programmes: EpgProgramme[] = (data.programs ?? [])
-          .filter(
-            (p: any) =>
-              p.channel === xmltvId &&
-              p.start >= todaySec * 1000 &&
-              p.start < tomorrowSec * 1000,
-          )
-          .map((p: any) => {
-            const start = new Date(p.start);
-            const stop = new Date(p.stop);
-            return {
-              channel: xmltvId,
-              title: Array.isArray(p.titles) ? p.titles[0]?.value ?? '' : (p.titles?.value ?? ''),
-              start: start.toISOString(),
-              stop: stop.toISOString(),
-              description: Array.isArray(p.descriptions)
-                ? p.descriptions[0]?.value ?? undefined
-                : p.descriptions?.value ?? undefined,
-              category: Array.isArray(p.categories) ? p.categories[0] : undefined,
-              isLive: start <= now && stop > now,
-            };
-          })
-          .sort((a: EpgProgramme, b: EpgProgramme) =>
-            a.start.localeCompare(b.start),
-          );
+      const list = programmeMap.get(channelId);
+      if (list) {
+        list.push(entry);
+      } else {
+        programmeMap.set(channelId, [entry]);
+      }
+    }
 
-        const nowPlaying = programmes.find((p) => p.isLive) ?? null;
+    // Sort programmes by start time
+    for (const [, list] of programmeMap) {
+      list.sort((a, b) => a.start.localeCompare(b.start));
+    }
 
-        const guide: EpgChannelGuide = {
-          channelId: xmltvId,
-          name,
-          logoUrl: logo,
-          programmes,
-          nowPlaying,
-        };
+    // Build EpgChannelGuide for each channel that has programmes
+    for (const ch of data.channels ?? []) {
+      const id = ch.id;
+      const programmes = programmeMap.get(id) ?? [];
+      const nowPlaying = programmes.find((p) => p.isLive) ?? null;
 
-        this.guideCache.set(xmltvId, guide);
-        return guide;
-      }),
-      catchError(() => of(null)),
-    );
+      const guide: EpgChannelGuide = {
+        channelId: id,
+        name: ch.name || id,
+        logoUrl: logoMap.get(id) ?? null,
+        programmes,
+        nowPlaying,
+      };
+
+      map.set(id, guide);
+      this.guideCache.set(id, guide);
+    }
+
+    return map;
   }
 }
