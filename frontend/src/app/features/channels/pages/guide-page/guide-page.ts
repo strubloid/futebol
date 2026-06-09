@@ -14,13 +14,14 @@ import { EpgService } from '../../services/epg.service';
 import { EpgChannelGuide, EpgProgramme } from '../../models/epg.models';
 import { ChannelFilters } from '../../models/channel-filters.interface';
 import { ChannelFiltersComponent } from '../../components/channel-filters/channel-filters';
+import { ChannelPlayerComponent } from '../../components/channel-player/channel-player';
 
 type TimeView = 'now' | 'later' | 'all';
 type SortBy = 'name' | 'now';
 
 @Component({
   selector: 'app-guide-page',
-  imports: [DatePipe, RouterLink, ChannelFiltersComponent, SlicePipe],
+  imports: [DatePipe, RouterLink, ChannelFiltersComponent, SlicePipe, ChannelPlayerComponent],
   templateUrl: './guide-page.html',
   styleUrl: './guide-page.scss',
 })
@@ -37,6 +38,10 @@ export class GuidePage implements OnInit {
   protected readonly totalToLoad = signal(0);
   protected readonly selectedChannel = signal<EpgChannelGuide | null>(null);
   protected readonly guideOpen = signal(false);
+
+  /** Channel selected for playing (opens player overlay). */
+  protected readonly playerChannel = signal<Channel | null>(null);
+  protected readonly playerOpen = computed(() => this.playerChannel() !== null);
   protected readonly filters = signal<ChannelFilters>({
     searchTerm: '',
     playlistId: 'all',
@@ -171,6 +176,14 @@ export class GuidePage implements OnInit {
   protected openGuide(ch: EpgChannelGuide): void {
     this.selectedChannel.set(ch);
     this.guideOpen.set(true);
+  }
+
+  protected openPlayer(channel: Channel): void {
+    this.playerChannel.set(channel);
+  }
+
+  protected closePlayer(): void {
+    this.playerChannel.set(null);
   }
 
   protected closeGuide(): void {

@@ -254,6 +254,29 @@
   min-width: 0;
 }
 
+.guide-watch-btn {
+  flex-shrink: 0;
+  background: var(--accent, #3b82f6);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius, 6px);
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 160ms ease;
+
+  &:hover {
+    background: var(--accent-hover, #2563eb);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
 .guide-logo {
   width: 36px;
   height: 36px;

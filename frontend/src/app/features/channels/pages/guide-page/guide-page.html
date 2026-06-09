@@ -127,6 +127,12 @@
                 <strong class="guide-channel-name">{{ item.guide.name }}</strong>
                 <span class="guide-channel-meta">{{ item.channel.sourcePlaylistName }}</span>
               </div>
+              <button
+                type="button"
+                class="guide-watch-btn"
+                (click)="openPlayer(item.channel)"
+                title="Assistir {{ item.guide.name }}"
+              >▶ Watch</button>
             </div>
 
             <!-- Now playing -->
@@ -185,6 +191,14 @@
         }
       </div>
     }
+  }
+
+  <!-- ─── Channel Player overlay ─── -->
+  @if (playerOpen() && playerChannel()) {
+    <app-channel-player
+      [channel]="playerChannel()!"
+      (close)="closePlayer()"
+    />
   }
 
   <!-- ─── Full guide panel ─── -->
